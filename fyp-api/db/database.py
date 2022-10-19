@@ -255,7 +255,7 @@ def delete_class(CID: str):
         playload['status'] = 'error'
         return playload
 
-def create_question(Scope: str, Description: str, PIC: str, Tag: str, UID: str):
+def create_question(Scope: str, Description: str, PIC: str, Tag: str, SolutionSeq: str, UID: str):
     """ Create a new question
     
     Args:
@@ -263,6 +263,7 @@ def create_question(Scope: str, Description: str, PIC: str, Tag: str, UID: str):
         Description (str): question description
         PIC (str): qustion picture name
         Tag (str): question tag (standard, multiple solutions, insert key code)
+        SolutionSeq (str): sequence of subsolutions
         UID (str): user id
     
     Returns:
@@ -278,9 +279,9 @@ def create_question(Scope: str, Description: str, PIC: str, Tag: str, UID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Question` (`QID`, `Date`, `Scope`, `Description`, `PIC`, `Tag`, `UID`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    sql = "INSERT INTO `Question` (`QID`, `Date`, `Scope`, `Description`, `PIC`, `Tag`, `SolutionSeq`, `UID`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                     QID = str(uuid.uuid4())
-                    cursor.execute(sql, (QID, date.today().strftime("%Y-%m-%d"), Scope, Description, PIC, Tag, UID))
+                    cursor.execute(sql, (QID, date.today().strftime("%Y-%m-%d"), Scope, Description, PIC, Tag, SolutionSeq, UID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = QID
@@ -316,7 +317,7 @@ def get_question(QID: str):
         playload['status'] = 'error'
         return playload
 
-def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, UID: str):
+def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, SolutionSeq: str, UID: str):
     """ Update question information
 
     Args: 
@@ -326,6 +327,7 @@ def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, 
         Description (str): question description
         PIC (str): qustion picture name
         Tag (str): question tag (standard, multiple solutions, insert key code)
+        SolutionSeq (str): sequence of subsolutions
         UID (str): user id
     
     Returns:
@@ -341,8 +343,8 @@ def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, 
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Question` SET `Scope`=%s, `Description`=%s, `PIC`=%s, `Tag`=%s, `UID`=%s WHERE `QID`=%s"
-                    cursor.execute(sql, (Scope, Description, PIC, Tag, UID, QID))
+                    sql = "UPDATE `Question` SET `Scope`=%s, `Description`=%s, `PIC`=%s, `Tag`=%s, `SolutionSeq`=%s, `UID`=%s WHERE `QID`=%s"
+                    cursor.execute(sql, (Scope, Description, PIC, Tag, SolutionSeq, UID, QID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -484,12 +486,13 @@ def delete_solution(SID: str):
         playload['status'] = 'error'
         return playload
 
-def create_block(SID: str):
+def create_block(Tag: str, FragmentSeq: str, DLID: str):
     """ Create a new block
     
     Args:
-        SID (str): solution id
-    
+        Tag (str): block tag (single fragment, multiple fragments))
+        FragmentSeq (str): sequence of fragments
+        DLID (str): difficulty level id   
     Returns:
         dict: status(success, error), uuid
     """
@@ -503,9 +506,9 @@ def create_block(SID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Block` (`BID`, `SID`) VALUES (%s, %s)"
+                    sql = "INSERT INTO `Block` (`BID`, `Tag`, `FragmentSeq`, `DLID`) VALUES (%s, %s, %s, %s)"
                     BID = str(uuid.uuid4())
-                    cursor.execute(sql, (BID, SID))
+                    cursor.execute(sql, (BID, Tag, FragmentSeq, DLID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = BID
@@ -541,12 +544,14 @@ def get_block(BID: str):
         playload['status'] = 'error'
         return playload
 
-def update_block(BID: str, SID: str):
+def update_block(BID: str, Tag: str, FragmentSeq: str, DLID: str):
     """ Update block information
 
     Args: 
         BID (str): block id
-        SID (str): solution id
+        Tag (str): block tag (single fragment, multiple fragments))
+        FragmentSeq (str): sequence of fragments
+        DLID (str): difficulty level id    
     
     Returns:
         dict: status(success, error)
@@ -556,13 +561,13 @@ def update_block(BID: str, SID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                result = get_solution(SID)
+                result = get_difficulty_level(DLID)
                 if result['status'] == 'error':
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Block` SET `SID`=%s WHERE `BID`=%s"
-                    cursor.execute(sql, (SID, BID))
+                    sql = "UPDATE `Block` SET `Tag`=%s, `FragmentSeq`=%s, `DLID`=%s WHERE `BID`=%s"
+                    cursor.execute(sql, (Tag, FragmentSeq, DLID, BID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -593,11 +598,12 @@ def delete_block(BID: str):
         playload['status'] = 'error'
         return playload
 
-def create_fragment(Code: str, BID: str):
+def create_fragment(Code: str, Tag: str, BID: str):
     """ Create a new fragment
     
     Args:
         Code (str): code
+        Tag (str): fragment tag (context, comment))
         BID (str): block id
     
     Returns:
@@ -613,9 +619,9 @@ def create_fragment(Code: str, BID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Fragment` (`FID`, `Code`, `BID`) VALUES (%s, %s, %s)"
+                    sql = "INSERT INTO `Fragment` (`FID`, `Code`, `Tag`, `BID`) VALUES (%s, %s, %s, %s)"
                     FID = str(uuid.uuid4())
-                    cursor.execute(sql, (FID, Code, BID))
+                    cursor.execute(sql, (FID, Code, Tag, BID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = FID
@@ -651,12 +657,13 @@ def get_fragment(FID: str):
         playload['status'] = 'error'
         return playload
 
-def update_fragment(FID: str, Code: str, BID: str):
+def update_fragment(FID: str, Code: str, Tag: str, BID: str):
     """ Update fragment information
 
     Args: 
         FID (str): fragment id
         Code (str): code
+        Tag (str): fragment tag (context, comment))
         BID (str): block id
     
     Returns:
@@ -672,8 +679,8 @@ def update_fragment(FID: str, Code: str, BID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Fragment` SET `Code`=%s, `BID`=%s WHERE `FID`=%s"
-                    cursor.execute(sql, (Code, BID, FID))
+                    sql = "UPDATE `Fragment` SET `Code`=%s, `Tag`=%s, `BID`=%s WHERE `FID`=%s"
+                    cursor.execute(sql, (Code, Tag, BID, FID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -926,12 +933,14 @@ def delete_feedback(FBID: str):
         playload['status'] = 'error'
         return playload
 
-def create_comment(Content: str, FID: str):
-    """ Create a new comment
+def create_difficulty_level(DLID: str, Level: str, BlockSeq: str, SID: str):
+    """ Create a new difficulty level
     
     Args:
-        Content (str): content
-        FID (str): fragment id
+        DLID (str): difficulty level id
+        Level (str): level
+        BlockSeq (str): block sequence
+        SID (str): solution id
     
     Returns:
         dict: status(success, error), uuid
@@ -941,56 +950,56 @@ def create_comment(Content: str, FID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                result = get_fragment(FID)
+                result = get_solution(SID)
                 if result['status'] == 'error':
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Comment` (`CMTID`, `Content`, `FID`) VALUES (%s, %s, %s)"
-                    CMTID = str(uuid.uuid4())
-                    cursor.execute(sql, (CMTID, Content, FID))
+                    sql = "INSERT INTO `DifficultyLevel` (`DLID`, `Level`, `BlockSeq`, `SID`) VALUES (%s, %s, %s, %s)"
+                    cursor.execute(sql, (DLID, Level, BlockSeq, SID))
                     connection.commit()
                     playload['status'] = 'success'
-                    playload['uuid'] = CMTID
+                    playload['uuid'] = DLID
                     return playload
     except:
         playload['status'] = 'error'
         return playload
 
-def get_comment(CMTID: str):
-    """ Get comment information
+def get_difficulty_level(DLID: str):
+    """ Get difficulty level information
 
     Args: 
-        CMTID (str): comment id
+        DLID (str): difficulty level id
     
     Returns:
-        dict: status(success, error), comment
+        dict: status(success, error), difficulty level
     """
-    playload = {'status': '', 'comment': ''}
+    playload = {'status': '', 'difficulty_level': ''}
     try:
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM `Comment` WHERE `CMTID`=%s"
-                cursor.execute(sql, (CMTID))
+                sql = "SELECT * FROM `DifficultyLevel` WHERE `DLID`=%s"
+                cursor.execute(sql, (DLID))
                 result = cursor.fetchall()
                 if (len(result) == 0):
                     playload['status'] = 'error'
                     return playload
                 playload['status'] = 'success'
-                playload['comment'] = result[0]
+                playload['difficulty_level'] = result[0]
                 return playload
     except:
         playload['status'] = 'error'
         return playload
 
-def update_comment(CMTID: str, Content: str, FID: str):
-    """ Update comment information
+def update_difficulty_level(DLID: str, Level: str, BlockSeq: str, SID: str):
+    """ Update difficulty level information
 
     Args: 
-        CMTID (str): comment id
-        Content (str): content
-        FID (str): fragment id
+        DLID (str): difficulty level id
+        Level (str): level
+        BlockSeq (str): block sequence
+        SID (str): solution id
     
     Returns:
         dict: status(success, error)
@@ -1000,13 +1009,13 @@ def update_comment(CMTID: str, Content: str, FID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                result = get_fragment(FID)
+                result = get_solution(SID)
                 if result['status'] == 'error':
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Comment` SET `Content`=%s, `FID`=%s WHERE `CMTID`=%s"
-                    cursor.execute(sql, (Content, FID, CMTID))
+                    sql = "UPDATE `DifficultyLevel` SET `Level`=%s, `BlockSeq`=%s, `SID`=%s WHERE `DLID`=%s"
+                    cursor.execute(sql, (Level, BlockSeq, SID, DLID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -1014,11 +1023,11 @@ def update_comment(CMTID: str, Content: str, FID: str):
         playload['status'] = 'error'
         return playload
 
-def delete_comment(CMTID: str):
-    """ Delete comment
+def delete_difficulty_level(DLID: str):
+    """ Delete difficulty level
 
     Args: 
-        CMTID (str): comment id
+        DLID (str): difficulty level id
     
     Returns:
         dict: status(success, error)
@@ -1028,8 +1037,8 @@ def delete_comment(CMTID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                sql = "DELETE FROM `Comment` WHERE `CMTID`=%s"
-                cursor.execute(sql, (CMTID))
+                sql = "DELETE FROM `DifficultyLevel` WHERE `DLID`=%s"
+                cursor.execute(sql, (DLID))
                 connection.commit()
                 playload['status'] = 'success'
                 return playload
