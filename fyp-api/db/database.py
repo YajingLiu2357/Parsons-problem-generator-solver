@@ -1046,6 +1046,36 @@ def delete_difficulty_level(DLID: str):
         playload['status'] = 'error'
         return playload
 
+def login_check(email: str, password: str):
+    """ Check login information
+
+    Args: 
+        email (str): email
+        password (str): password
+    
+    Returns:
+        dict: status(success, error), user
+    """
+    playload = {'status': '', 'user': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `User` WHERE `Email`=%s "
+                cursor.execute(sql, (email))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                given_hashed_password = password_validator.hash_password(password, result['UID'])
+                if given_hashed_password == result['HashedPassword']:
+                    playload['status'] = 'success'
+                    playload['user'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

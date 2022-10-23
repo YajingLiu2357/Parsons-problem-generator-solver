@@ -8,5 +8,6 @@ export default createRouter({
   routes: [
     { path: "/", component: Home },
     { path: "/about", component: () => import(/* webpackChunkName: "home" */ "../views/About.vue") },
+    { path: "/login", component: () => import(/* webpackChunkName: "home" */ "../views/Login.vue") },
   ]
 })
