@@ -1076,6 +1076,21 @@ def login_check(email: str, password: str):
         playload['status'] = 'error'
         return playload
 
+def create_question_prototype(QName: str, Scope: str, Description: str):
+    """ Create a new question prototype
+    
+    Args:
+        QName (str): question name
+        Scope (str): scope
+        Description (str): description
+    
+    Returns:
+        dict: status(success, error), uuid
+    """
+    playload=create_question(Scope, Description, '', '', '', '8a9c6766-971f-423a-9d43-f094fc926825')
+    print('Success')
+    return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

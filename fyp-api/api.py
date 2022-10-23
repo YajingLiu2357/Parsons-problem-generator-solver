@@ -1,6 +1,7 @@
 import email
 import os
 import re
+from sre_constants import SUCCESS
 import sys
 
 from tkinter import E
@@ -15,16 +16,10 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
 from typing import Optional
 
-SECRET_KEY = "6a5c696a4469597fe2962bcd83e05846fe86ec5bbde835c7983955a295e092da"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 10080
-
 fpath = os.path.join(os.path.dirname(__file__), 'db')
 sys.path.append(fpath)
 
 app = FastAPI()
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 origins = ["*"]
 
@@ -35,13 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str = Field(default='Bearer')
-
-class TokenData(BaseModel):
-    username: str = None
 
 class User(BaseModel):
     email: str
@@ -54,14 +42,14 @@ class LoginData(BaseModel):
     password: str
     # remember_me: str
 
-class ChangePasswordData(BaseModel):
-    email: str
-    oldPassword: str
-    newPassword: str
-
 class RegisterData(BaseModel):
     email: str
     password: str
+
+class QuestionData(BaseModel):
+    Qname: str
+    Scope: str
+    Description: str
 
 @app.get("/api/")
 async def root():
@@ -76,3 +64,17 @@ async def login(loginData: LoginData):
 def register(registerData: RegisterData):
     from db.database import create_account
     return create_account(registerData.email.split('@')[0], registerData.email, registerData.password, 'user')
+
+@app.post('/api/question/create')
+def create_question(questionData: QuestionData):
+    from db.database import create_question_prototype
+    return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description)
+
+@app.post('/api/solution/upload')
+async def upload_solution(files: List[UploadFile]):
+    print('enter')
+    for file in files:
+        path = os.path.join(fpath, 'solution/' + file.filename)
+        with open(path, 'wb') as f:
+            f.write(file.file.read())
+    print ('successful')

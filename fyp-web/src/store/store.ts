@@ -3,7 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
     state:{
         hello:'Vue-SPA-Quickstart',
-        userStatus: 'visitor',  // visitor, student, teacher, admin
+        userStatus: 'teacher',  // visitor, student, teacher, admin
         activeTab: '',
         userEmail: '',
         userName: '',
@@ -17,10 +17,6 @@ export default createStore({
         },
         chgStatus(state, payload){
             state.userStatus = payload.userStatus;
-        },
-        chgActiveTab(state, payload){
-            state.activeTab = tab;
-            console.log('[debug] active tab change to ' +tab)
         },
         signOut(state){
             state.UID = '';
