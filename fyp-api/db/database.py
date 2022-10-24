@@ -402,7 +402,9 @@ def create_solution(Sname: str, QID: str):
                     SID = str(uuid.uuid4())
                     cursor.execute(sql, (SID, Sname, QID))
                     connection.commit()
-                    cut_solution(Sname, SID)
+                    level = create_difficulty_level('', '', SID)
+                    DLID = level['uuid']
+                    cut_solution(Sname, DLID)
                     playload['status'] = 'success'
                     playload['uuid'] = SID
                     return playload
@@ -505,7 +507,7 @@ def create_block(Tag: str, FragmentSeq: str, DLID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                result = get_solution(SID)
+                result = get_difficulty_level(DLID)
                 if result['status'] == 'error':
                     playload['status'] = 'error'
                     return playload
@@ -937,7 +939,7 @@ def delete_feedback(FBID: str):
         playload['status'] = 'error'
         return playload
 
-def create_difficulty_level(DLID: str, Level: str, BlockSeq: str, SID: str):
+def create_difficulty_level(Level: str, BlockSeq: str, SID: str):
     """ Create a new difficulty level
     
     Args:
@@ -960,6 +962,7 @@ def create_difficulty_level(DLID: str, Level: str, BlockSeq: str, SID: str):
                     return playload
                 else:
                     sql = "INSERT INTO `DifficultyLevel` (`DLID`, `Level`, `BlockSeq`, `SID`) VALUES (%s, %s, %s, %s)"
+                    DLID = str(uuid.uuid4())
                     cursor.execute(sql, (DLID, Level, BlockSeq, SID))
                     connection.commit()
                     playload['status'] = 'success'
@@ -1116,7 +1119,7 @@ def upload_solution(files):
         playload['status'] = 'error'
         return playload
 
-def cut_solution(fname: str, SID: str):
+def cut_solution(fname: str, DLID: str):
     """ Cut solution
 
     Args: 
@@ -1125,16 +1128,39 @@ def cut_solution(fname: str, SID: str):
     Returns:
         dict: status(success, error), uuid
     """
-    playload = {'status': '', 'fragment': []}
+    playload = {'status': '', 'fragments': []}
     try:
         path = os.path.join(fpath, 'solution/' + fname)
         with open(path, 'rb') as f:
             lines = f.readlines()
             for line in lines:
                 if not line.isspace():
-                    playload['fragment'].append(line.strip().decode('utf-8'))
+                    playload['fragments'].append(line.strip().decode('utf-8'))
+        create_fragment_prototype(playload['fragments'], DLID)
         playload['status'] = 'success'
         return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def create_fragment_prototype(fragments: list, DLID: str):
+    """ Create a new fragment prototype
+
+    Args: 
+        fragment (list): fragment
+        SID (str): solution id
+    
+    Returns:
+        dict: status(success, error)
+    """
+    print ("enter create_fragment_prototype")
+    playload = {'status': ''}
+    try:
+        for fragment in fragments:
+            block = create_block('', str(fragment), DLID)
+            print(block['status'])
+            playload = create_fragment(fragment, '', block['uuid'])
+        playload['status'] = 'success'
     except:
         playload['status'] = 'error'
         return playload
@@ -1179,5 +1205,6 @@ if __name__ == '__main__':
     # res = delete_distractor("03bb3d5b-bc30-4219-b732-f368107317df")
     # res = delete_feedback("27d11e9e-389f-4c03-ae2c-f6c20b3ea0c8")
     # res = delete_comment("71ee485a-06cc-42e6-96fe-9a74a57c50a5")
-    res = cut_solution("mat2*2.py")
+    # res = create_difficulty_level("", "", "7bfaf343-7557-49eb-a9a3-82acf0cafa1b")
+    res = cut_solution("mat2*2.py", "8cc31767-c538-4882-88ac-be9bff127893")
     print(res)
