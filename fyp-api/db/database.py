@@ -402,6 +402,7 @@ def create_solution(Sname: str, QID: str):
                     SID = str(uuid.uuid4())
                     cursor.execute(sql, (SID, Sname, QID))
                     connection.commit()
+                    cut_solution(Sname, SID)
                     playload['status'] = 'success'
                     playload['uuid'] = SID
                     return playload
@@ -1115,6 +1116,29 @@ def upload_solution(files):
         playload['status'] = 'error'
         return playload
 
+def cut_solution(fname: str, SID: str):
+    """ Cut solution
+
+    Args: 
+        fname (str): file name
+    
+    Returns:
+        dict: status(success, error), uuid
+    """
+    playload = {'status': '', 'fragment': []}
+    try:
+        path = os.path.join(fpath, 'solution/' + fname)
+        with open(path, 'rb') as f:
+            lines = f.readlines()
+            for line in lines:
+                if not line.isspace():
+                    playload['fragment'].append(line.strip().decode('utf-8'))
+        playload['status'] = 'success'
+        return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
@@ -1155,4 +1179,5 @@ if __name__ == '__main__':
     # res = delete_distractor("03bb3d5b-bc30-4219-b732-f368107317df")
     # res = delete_feedback("27d11e9e-389f-4c03-ae2c-f6c20b3ea0c8")
     # res = delete_comment("71ee485a-06cc-42e6-96fe-9a74a57c50a5")
+    res = cut_solution("mat2*2.py")
     print(res)
