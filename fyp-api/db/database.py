@@ -1091,7 +1091,6 @@ def create_question_prototype(QName: str, Scope: str, Description: str):
         dict: status(success, error), uuid
     """
     playload=create_question(Scope, Description, '', '', '', '8a9c6766-971f-423a-9d43-f094fc926825')
-    print('Success')
     return playload
 
 def upload_solution(files):
@@ -1103,24 +1102,15 @@ def upload_solution(files):
     Returns:
         dict: status(success, error), uuid
     """
-    playload = {'status': '', 'uuid': ''}
+    playload = {'status': ''}
     try:
-        connection = create_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                Sname = []
-                for file in files:
-                    Sname.append(file.filename)
-                    path = os.path.join(fpath, 'solution/' + file.filename)
-                    print(path)
-                    with open(path, 'wb') as f:
-                        f.write(file.file.read())
-                Sname = ';'.join(Sname)
-                sql = "INSERT INTO `Solution` (`SID`, `Sname`, `QID`) VALUES (%s, %s, %s)"
-                cursor.execute(sql, (uuid.uuid4(), Sname, 'f955ad99-8020-4479-a4d2-19c62cb8817d'))
-                connection.commit()
-                playload['status'] = 'success'
-                return playload
+        for file in files:
+            path = os.path.join(fpath, 'solution/' + file.filename)
+            print(path)
+            with open(path, 'wb') as f:
+                f.write(file.file.read())
+        playload['status'] = 'success'
+        return playload
     except:
         playload['status'] = 'error'
         return playload

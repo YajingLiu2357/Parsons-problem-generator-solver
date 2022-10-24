@@ -12,54 +12,7 @@ const route = useRoute()
 const name = ref("")
 const description = ref("")
 const scope = ref("")
-const file = new File([],'')
-const solution = ref(file)
-const solutionName = ref("")
-/**
-const onFileChange = (event) => {
-  const files = event.target.files || event.dataTransfer.files;
-  solution.value = files[0]
-  let reader = new FileReader()
-  reader.readAsDataURL(solution.value)
-  reader.onload = function (){
-  }
-}
-*/
-/**
-const createQuestion = () => {
-  if (name.value === "" || description.value === "" || scope.value === "" || solution.value.name === "") {
-    alert("Please fill in all the fields.")
-  } else {
-    if (store.state.userStatus === 'teacher') {
-      solutionName.value = solution.value.name
-      const formData = new FormData();
-      formData.append("images", solution.value)
-      const queryImage = "http://" + config.apiServer + ":" + config.port + "/api/solution/upload"
-      axios.post(queryImage, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }).then(() => {
-        const query = "http://" + config.apiServer + ":" + config.port + "/api/question/create"
-        axios.post(query, {
-          Qname: name.value,
-          Scope: scope.value,
-          Description: description.value,
-        }).then((res) => {
-          if (res.data.status === 'success') {
-            alert("Question created successfully")
-            router.push('/question/' + res.data.pid)
-          } else {
-            alert(res.data.status)
-          }
-        })
-      })
-    } else {
-      alert("You do not have the authority to add a new product.")
-    }
-  }
-}
-*/
+
 const createQuestion = () => {
   if (name.value === "" || description.value === "" || scope.value === "") {
     alert("Please fill in all the fields.")
@@ -72,8 +25,7 @@ const createQuestion = () => {
         Description: description.value,
       }).then((res) => {
         if (res.data.status === 'success') {
-          alert("Question created successfully")
-          router.push('/question/' + res.data.pid)
+          router.push('/upload_solution/' + res.data.uuid)
         } else {
           alert(res.data.status)
         }
@@ -82,31 +34,6 @@ const createQuestion = () => {
       alert("You do not have the authority to add a new product.")
     }
   }
-}
-
-const onFileChange = (event) => {
-  const files = event.target.files || event.dataTransfer.files;
-  solution.value = files[0]
-  solutionName.value = solution.value.name
-  let reader = new FileReader()
-  reader.readAsDataURL(solution.value)
-  reader.onload = function (){
-    alert("finsh loading")
-    const formData = new FormData();
-    formData.append("files", solution.value)
-    const queryFile = "http://" + config.apiServer + ":" + config.port + "/api/solution/upload"
-    axios.post(queryFile, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-        }).then((res) => {
-            if (res.data.status === 'success') {
-                alert("File uploaded successfully")
-            } else {
-                alert(res.data.status)
-            }
-        })
-    } 
 }
 
 </script>
@@ -153,20 +80,6 @@ const onFileChange = (event) => {
                   placeholder=""
                   required
                   type="text"
-              />
-            </div>
-            <div class="mt-4 mb-4">
-              <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Upload Solution File</label
-              >
-              <input
-                  accept=".py"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder=""
-                  required
-                  type="file"
-                  v-on:change="onFileChange"
-                  multiple
               />
             </div>
           </div>

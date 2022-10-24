@@ -10,5 +10,6 @@ export default createRouter({
     { path: "/about", component: () => import(/* webpackChunkName: "home" */ "../views/About.vue") },
     { path: "/login", component: () => import(/* webpackChunkName: "home" */ "../views/Login.vue") },
     { path: "/input_question", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestion.vue") },
+    { path: "/upload_solution/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/UploadSolution.vue") },
   ]
 })

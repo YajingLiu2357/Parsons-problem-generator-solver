@@ -51,6 +51,10 @@ class QuestionData(BaseModel):
     Scope: str
     Description: str
 
+class SolutionData(BaseModel):
+    Sname: str
+    QID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -74,3 +78,9 @@ def create_question(questionData: QuestionData):
 async def upload_solution(files: List[UploadFile] = File(...)):
     from db.database import upload_solution
     return upload_solution(files)
+
+@app.post('/api/solution/create')
+def create_solution(solutionData: SolutionData):
+    print("enter create solution")
+    from db.database import create_solution
+    return create_solution(solutionData.Sname, solutionData.QID)
