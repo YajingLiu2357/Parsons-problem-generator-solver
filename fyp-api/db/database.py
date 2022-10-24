@@ -1,11 +1,14 @@
 import re
+import os
+import sys
 import settings
 import pymysql.cursors
 import uuid
 import password_validator
 from datetime import date
 
-imgdir = 'img/'
+fpath = os.path.join(os.path.dirname(__file__))
+sys.path.append(fpath)
 
 def create_connection():
     """Create a connection to the database."""
@@ -1090,6 +1093,37 @@ def create_question_prototype(QName: str, Scope: str, Description: str):
     playload=create_question(Scope, Description, '', '', '', '8a9c6766-971f-423a-9d43-f094fc926825')
     print('Success')
     return playload
+
+def upload_solution(files):
+    """ Upload solution
+
+    Args: 
+        files (file): solution file
+    
+    Returns:
+        dict: status(success, error), uuid
+    """
+    playload = {'status': '', 'uuid': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                Sname = []
+                for file in files:
+                    Sname.append(file.filename)
+                    path = os.path.join(fpath, 'solution/' + file.filename)
+                    print(path)
+                    with open(path, 'wb') as f:
+                        f.write(file.file.read())
+                Sname = ';'.join(Sname)
+                sql = "INSERT INTO `Solution` (`SID`, `Sname`, `QID`) VALUES (%s, %s, %s)"
+                cursor.execute(sql, (uuid.uuid4(), Sname, 'f955ad99-8020-4479-a4d2-19c62cb8817d'))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 
 if __name__ == '__main__':
     res = None

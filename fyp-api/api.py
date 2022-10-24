@@ -14,7 +14,7 @@ from typing import List
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List
 
 fpath = os.path.join(os.path.dirname(__file__), 'db')
 sys.path.append(fpath)
@@ -71,10 +71,6 @@ def create_question(questionData: QuestionData):
     return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description)
 
 @app.post('/api/solution/upload')
-async def upload_solution(files: List[UploadFile]):
-    print('enter')
-    for file in files:
-        path = os.path.join(fpath, 'solution/' + file.filename)
-        with open(path, 'wb') as f:
-            f.write(file.file.read())
-    print ('successful')
+async def upload_solution(files: List[UploadFile] = File(...)):
+    from db.database import upload_solution
+    return upload_solution(files)

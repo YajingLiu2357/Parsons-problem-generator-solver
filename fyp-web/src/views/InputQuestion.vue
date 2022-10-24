@@ -88,12 +88,11 @@ const onFileChange = (event) => {
   const files = event.target.files || event.dataTransfer.files;
   solution.value = files[0]
   solutionName.value = solution.value.name
-  alert('solutionName.value: ' + solution.value.name)
   let reader = new FileReader()
   reader.readAsDataURL(solution.value)
   reader.onload = function (){
+    alert("finsh loading")
     const formData = new FormData();
-    formData.append("files", solution.value)
     formData.append("files", solution.value)
     const queryFile = "http://" + config.apiServer + ":" + config.port + "/api/solution/upload"
     axios.post(queryFile, formData, {
@@ -101,11 +100,11 @@ const onFileChange = (event) => {
             'Content-Type': 'multipart/form-data'
         }
         }).then((res) => {
-        if (res.data.status === 'success') {
-            alert("File uploaded successfully")
-        } else {
-            alert(res.data.status)
-        }
+            if (res.data.status === 'success') {
+                alert("File uploaded successfully")
+            } else {
+                alert(res.data.status)
+            }
         })
     } 
 }
@@ -166,7 +165,8 @@ const onFileChange = (event) => {
                   placeholder=""
                   required
                   type="file"
-                  @change="onFileChange"
+                  v-on:change="onFileChange"
+                  multiple
               />
             </div>
           </div>
