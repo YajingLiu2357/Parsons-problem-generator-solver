@@ -81,6 +81,20 @@ async def upload_solution(files: List[UploadFile] = File(...)):
 
 @app.post('/api/solution/create')
 def create_solution(solutionData: SolutionData):
-    print("enter create solution")
     from db.database import create_solution
     return create_solution(solutionData.Sname, solutionData.QID)
+
+@app.get('/api/question/{QID}')
+def get_question(QID: str):
+    from db.database import get_question
+    return get_question(QID)
+
+@app.get('/api/fragment/{QID}')
+def get_fragment(QID: str):
+    from db.database import get_fragment_prototype
+    return get_fragment_prototype(QID)
+
+@app.get('/api/sequence/{BID}')
+def get_sequence(BID: str):
+    from db.database import get_sequence_prototype
+    return get_sequence_prototype(BID)

@@ -1135,7 +1135,7 @@ def cut_solution(fname: str, DLID: str):
             lines = f.readlines()
             for line in lines:
                 if not line.isspace():
-                    playload['fragments'].append(line.strip().decode('utf-8'))
+                    playload['fragments'].append(line.decode('utf-8'))
         create_fragment_prototype(playload['fragments'], DLID)
         playload['status'] = 'success'
         return playload
@@ -1153,14 +1153,76 @@ def create_fragment_prototype(fragments: list, DLID: str):
     Returns:
         dict: status(success, error)
     """
-    print ("enter create_fragment_prototype")
     playload = {'status': ''}
     try:
+        fragmentSeq = ""
+        block = create_block('', fragmentSeq, DLID)
         for fragment in fragments:
-            block = create_block('', str(fragment), DLID)
-            print(block['status'])
             playload = create_fragment(fragment, '', block['uuid'])
+            fragmentSeq += playload['uuid'] + ';'
+        update_block(block['uuid'], '', fragmentSeq, DLID)
         playload['status'] = 'success'
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def get_fragment_prototype(QID: str):
+    """ Get fragment prototype
+
+    Args: 
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error), fragments
+    """
+    playload = {'status': '', 'fragments': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Fragment` WHERE `BID` IN (SELECT `BID` FROM `Block` WHERE `DLID` IN (SELECT `DLID` FROM `DifficultyLevel` WHERE `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` =%s)))"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchall()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                playload['status'] = 'success'
+                playload['fragments'] = result
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def get_sequence_prototype(BID: str):
+    """ Get sequence prototype
+
+    Args: 
+        BID (str): block id
+    
+    Returns:
+        dict: status(success, error), fragments
+    """
+    playload = {'status': '', 'sequence': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT FragmentSeq FROM `Block` WHERE `BID` =%s"
+                cursor.execute(sql, (BID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload  
+                FragmentSeq = result['FragmentSeq']
+                FragmentSeq = FragmentSeq.split(';')
+                FragmentSeq.pop()
+                for fragment in FragmentSeq:
+                    sql = "SELECT Code FROM `Fragment` WHERE `FID` =%s"
+                    cursor.execute(sql, (fragment))
+                    result = cursor.fetchone()
+                    playload['sequence'].append(result['Code'])
+                playload['status'] = 'success'
+                return playload
     except:
         playload['status'] = 'error'
         return playload
@@ -1206,5 +1268,9 @@ if __name__ == '__main__':
     # res = delete_feedback("27d11e9e-389f-4c03-ae2c-f6c20b3ea0c8")
     # res = delete_comment("71ee485a-06cc-42e6-96fe-9a74a57c50a5")
     # res = create_difficulty_level("", "", "7bfaf343-7557-49eb-a9a3-82acf0cafa1b")
-    res = cut_solution("mat2*2.py", "8cc31767-c538-4882-88ac-be9bff127893")
+    # res = cut_solution("mat2*2.py", "8cc31767-c538-4882-88ac-be9bff127893")
+    # res = create_solution("ex.py", "480a1e16-9d9e-44b6-8aa3-48e9d693f19a")
+    # res = delete_question("5b7834de-b884-45b6-8239-fba245c5d526")
+    # res = get_fragment_prototype("a7210de1-f7a5-4e4f-8307-cafddbdd6550")
+    res = get_sequence_prototype("365e13a6-2fc4-4df3-b313-285c4e3bb044")
     print(res)

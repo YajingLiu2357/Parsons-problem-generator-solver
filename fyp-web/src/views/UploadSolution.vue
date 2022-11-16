@@ -43,6 +43,7 @@ const uploadSolution = () => {
                 formData.append('files', solutions[i])
                 solutionsName += solutions[i].name + ";"
             }
+            solutionsName = solutions[0].name
             axios.post(querySolution, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -54,11 +55,8 @@ const uploadSolution = () => {
                         Sname: solutionsName,
                         QID: QID,
                     }).then((res) => {
-                        alert(solutionsName)
-                        alert(QID)
                         if (res.data.status === 'success') {
-                            alert("Upload success.")
-                            router.push('/question/' + route.params.pid)
+                            router.push('/question/' + QID)
                         } else {
                             alert(res.data.status)
                         }

@@ -6,10 +6,12 @@ const webHistory = createWebHashHistory()
 export default createRouter({
   history: webHistory,
   routes: [
-    { path: "/", component: Home },
+    //{ path: "/", component: Home },
+    { path: "/", component: () => import (/* webpackChunkName: "home" */ "../views/InputQuestion.vue")},
     { path: "/about", component: () => import(/* webpackChunkName: "home" */ "../views/About.vue") },
     { path: "/login", component: () => import(/* webpackChunkName: "home" */ "../views/Login.vue") },
-    { path: "/input_question", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestion.vue") },
+    //{ path: "/input_question", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestion.vue") },
     { path: "/upload_solution/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/UploadSolution.vue") },
+    { path: "/question/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/Question.vue") },
   ]
 })
