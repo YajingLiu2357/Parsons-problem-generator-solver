@@ -258,14 +258,15 @@ def delete_class(CID: str):
         playload['status'] = 'error'
         return playload
 
-def create_question(Scope: str, Description: str, PIC: str, Tag: str, SolutionSeq: str, UID: str):
+def create_question(Qname: str, Scope: str, Description: str, PIC: str, Type: str, SolutionSeq: str, UID: str):
     """ Create a new question
     
     Args:
+        Qname (str): question name
         Scope (str): question scope
         Description (str): question description
         PIC (str): qustion picture name
-        Tag (str): question tag (standard, multiple solutions, insert key code)
+        Type (str): question types (single solution, multiple solutions, multi-step solutions)
         SolutionSeq (str): sequence of subsolutions
         UID (str): user id
     
@@ -282,9 +283,9 @@ def create_question(Scope: str, Description: str, PIC: str, Tag: str, SolutionSe
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Question` (`QID`, `Date`, `Scope`, `Description`, `PIC`, `Tag`, `SolutionSeq`, `UID`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                    sql = "INSERT INTO `Question` (`QID`, `Qname`, `Date`, `Scope`, `Description`, `PIC`, `Type`, `SolutionSeq`, `UID`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                     QID = str(uuid.uuid4())
-                    cursor.execute(sql, (QID, date.today().strftime("%Y-%m-%d"), Scope, Description, PIC, Tag, SolutionSeq, UID))
+                    cursor.execute(sql, (QID, Qname, date.today().strftime("%Y-%m-%d"), Scope, Description, PIC, Type, SolutionSeq, UID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = QID
@@ -320,16 +321,16 @@ def get_question(QID: str):
         playload['status'] = 'error'
         return playload
 
-def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, SolutionSeq: str, UID: str):
+def update_question(QID: str, Qname: str, Scope: str, Description: str, PIC: str, Type: str, SolutionSeq: str, UID: str):
     """ Update question information
 
     Args: 
         QID (str): question id
-        Date (date): question generated date
+        Qname (str): question name
         Scope (str): question scope
         Description (str): question description
         PIC (str): qustion picture name
-        Tag (str): question tag (standard, multiple solutions, insert key code)
+        Type (str): question types (single solution, multiple solutions, multi-step solutions)
         SolutionSeq (str): sequence of subsolutions
         UID (str): user id
     
@@ -346,8 +347,8 @@ def update_question(QID: str, Scope: str, Description: str, PIC: str, Tag: str, 
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Question` SET `Scope`=%s, `Description`=%s, `PIC`=%s, `Tag`=%s, `SolutionSeq`=%s, `UID`=%s WHERE `QID`=%s"
-                    cursor.execute(sql, (Scope, Description, PIC, Tag, SolutionSeq, UID, QID))
+                    sql = "UPDATE `Question` SET `QName`=%s, `Scope`=%s, `Description`=%s, `PIC`=%s, `Type`=%s, `SolutionSeq`=%s, `UID`=%s WHERE `QID`=%s"
+                    cursor.execute(sql, (Qname, Scope, Description, PIC, Type, SolutionSeq, UID, QID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -378,11 +379,12 @@ def delete_question(QID: str):
         playload['status'] = 'error'
         return playload
 
-def create_solution(Sname: str, QID: str):
+def create_solution(Sname: str, Type: str, QID: str):
     """ Create a new solution
     
     Args:
-        Sname (str): solution name
+        Sname (str): solution file name
+        Type (str): solution types (fixed order, not fixed order)
         QID (str): question id
     
     Returns:
@@ -398,9 +400,9 @@ def create_solution(Sname: str, QID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Solution` (`SID`, `Sname`, `QID`) VALUES (%s, %s, %s)"
+                    sql = "INSERT INTO `Solution` (`SID`, `Sname`, `Type`, `QID`) VALUES (%s, %s, %s, %s)"
                     SID = str(uuid.uuid4())
-                    cursor.execute(sql, (SID, Sname, QID))
+                    cursor.execute(sql, (SID, Sname, Type, QID))
                     connection.commit()
                     level = create_difficulty_level('', '', SID)
                     DLID = level['uuid']
@@ -439,12 +441,13 @@ def get_solution(SID: str):
         playload['status'] = 'error'
         return playload
 
-def update_solution(SID: str, Sname: str, QID: str):
+def update_solution(SID: str, Sname: str, Type: str, QID: str):
     """ Update solution information
 
     Args: 
         SID (str): solution id
         Sname (str): solution name
+        Type (str): solution types (fixed order, not fixed order)
         QID (str): question id
     
     Returns:
@@ -460,8 +463,8 @@ def update_solution(SID: str, Sname: str, QID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Solution` SET `Sname`=%s, `QID`=%s WHERE `SID`=%s"
-                    cursor.execute(sql, (Sname, QID, SID))
+                    sql = "UPDATE `Solution` SET `Sname`=%s, `Type`=%s, `QID`=%s WHERE `SID`=%s"
+                    cursor.execute(sql, (Sname, Type, QID, SID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -492,11 +495,11 @@ def delete_solution(SID: str):
         playload['status'] = 'error'
         return playload
 
-def create_block(Tag: str, FragmentSeq: str, DLID: str):
+def create_block(Type: str, FragmentSeq: str, DLID: str):
     """ Create a new block
     
     Args:
-        Tag (str): block tag (single fragment, multiple fragments))
+        Type (str): block types (single fragment, multiple fragments(context), multiple fragments (unit)))
         FragmentSeq (str): sequence of fragments
         DLID (str): difficulty level id   
     Returns:
@@ -512,9 +515,9 @@ def create_block(Tag: str, FragmentSeq: str, DLID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Block` (`BID`, `Tag`, `FragmentSeq`, `DLID`) VALUES (%s, %s, %s, %s)"
+                    sql = "INSERT INTO `Block` (`BID`, `Type`, `FragmentSeq`, `DLID`) VALUES (%s, %s, %s, %s)"
                     BID = str(uuid.uuid4())
-                    cursor.execute(sql, (BID, Tag, FragmentSeq, DLID))
+                    cursor.execute(sql, (BID, Type, FragmentSeq, DLID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = BID
@@ -550,12 +553,12 @@ def get_block(BID: str):
         playload['status'] = 'error'
         return playload
 
-def update_block(BID: str, Tag: str, FragmentSeq: str, DLID: str):
+def update_block(BID: str, Type: str, FragmentSeq: str, DLID: str):
     """ Update block information
 
     Args: 
         BID (str): block id
-        Tag (str): block tag (single fragment, multiple fragments))
+        Type (str): block type (single fragment, multiple fragments(context), multiple fragments (unit))
         FragmentSeq (str): sequence of fragments
         DLID (str): difficulty level id    
     
@@ -572,8 +575,8 @@ def update_block(BID: str, Tag: str, FragmentSeq: str, DLID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Block` SET `Tag`=%s, `FragmentSeq`=%s, `DLID`=%s WHERE `BID`=%s"
-                    cursor.execute(sql, (Tag, FragmentSeq, DLID, BID))
+                    sql = "UPDATE `Block` SET `Type`=%s, `FragmentSeq`=%s, `DLID`=%s WHERE `BID`=%s"
+                    cursor.execute(sql, (Type, FragmentSeq, DLID, BID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -604,12 +607,12 @@ def delete_block(BID: str):
         playload['status'] = 'error'
         return playload
 
-def create_fragment(Code: str, Tag: str, BID: str):
+def create_fragment(Code: str, Type: str, BID: str):
     """ Create a new fragment
     
     Args:
         Code (str): code
-        Tag (str): fragment tag (context, comment))
+        Type (str): fragment types (code, comment))
         BID (str): block id
     
     Returns:
@@ -625,9 +628,9 @@ def create_fragment(Code: str, Tag: str, BID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Fragment` (`FID`, `Code`, `Tag`, `BID`) VALUES (%s, %s, %s, %s)"
+                    sql = "INSERT INTO `Fragment` (`FID`, `Code`, `Type`, `BID`) VALUES (%s, %s, %s, %s)"
                     FID = str(uuid.uuid4())
-                    cursor.execute(sql, (FID, Code, Tag, BID))
+                    cursor.execute(sql, (FID, Code, Type, BID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = FID
@@ -663,13 +666,13 @@ def get_fragment(FID: str):
         playload['status'] = 'error'
         return playload
 
-def update_fragment(FID: str, Code: str, Tag: str, BID: str):
+def update_fragment(FID: str, Code: str, Type: str, BID: str):
     """ Update fragment information
 
     Args: 
         FID (str): fragment id
         Code (str): code
-        Tag (str): fragment tag (context, comment))
+        Type (str): fragment type (code, comment))
         BID (str): block id
     
     Returns:
@@ -685,8 +688,8 @@ def update_fragment(FID: str, Code: str, Tag: str, BID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Fragment` SET `Code`=%s, `Tag`=%s, `BID`=%s WHERE `FID`=%s"
-                    cursor.execute(sql, (Code, Tag, BID, FID))
+                    sql = "UPDATE `Fragment` SET `Code`=%s, `Type`=%s, `BID`=%s WHERE `FID`=%s"
+                    cursor.execute(sql, (Code, Type, BID, FID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
