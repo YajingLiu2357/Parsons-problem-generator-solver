@@ -1086,19 +1086,43 @@ def login_check(email: str, password: str):
         playload['status'] = 'error'
         return playload
 
-def create_question_prototype(QName: str, Scope: str, Description: str):
+def create_question_prototype(Qname: str, Scope: str, Description: str, Type: str):
     """ Create a new question prototype
     
     Args:
-        QName (str): question name
+        Qname (str): question name
         Scope (str): scope
         Description (str): description
     
     Returns:
         dict: status(success, error), uuid
     """
-    playload=create_question(Scope, Description, '', '', '', '8a9c6766-971f-423a-9d43-f094fc926825')
+    playload=create_question(Qname, Scope, Description, '', Type, '', '8a9c6766-971f-423a-9d43-f094fc926825')
     return playload
+
+def update_question_prototype(QID: str, SolutionSeq: str):
+    """ Update question prototype
+    
+    Args:
+        QID (str): question id
+        SolutionSeq (str): solution sequence
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Question` SET `SolutionSeq`=%s WHERE `QID`=%s"
+                cursor.execute(sql, (SolutionSeq, QID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 
 def upload_solution(files):
     """ Upload solution

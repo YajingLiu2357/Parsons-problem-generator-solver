@@ -50,7 +50,10 @@ class QuestionData(BaseModel):
     Qname: str
     Scope: str
     Description: str
+    Type: str
 
+class UpdateQuestionData(BaseModel):
+    SolutionSeq: str
 class SolutionData(BaseModel):
     Sname: str
     QID: str
@@ -72,7 +75,12 @@ def register(registerData: RegisterData):
 @app.post('/api/question/create')
 def create_question(questionData: QuestionData):
     from db.database import create_question_prototype
-    return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description)
+    return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description, questionData.Type)
+
+@app.post('/api/question/update/{QID}')
+def update_question(QID: str, updateQuestionData: UpdateQuestionData):
+    from db.database import update_question_prototype
+    return update_question_prototype(QID, updateQuestionData.SolutionSeq)
 
 @app.post('/api/solution/upload')
 async def upload_solution(files: List[UploadFile] = File(...)):

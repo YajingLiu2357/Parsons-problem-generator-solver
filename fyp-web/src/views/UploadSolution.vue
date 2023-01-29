@@ -12,6 +12,7 @@ const route = useRoute()
 const file = new File([],'')
 const solutions = reactive([] as Array<File>)
 const QID = route.params.QID
+const questionType = ref("multiple solutions")
 
 const initFile = () => {
     if (solutions.length > 0){
@@ -38,29 +39,54 @@ const uploadSolution = () => {
         if (store.state.userStatus === 'teacher') {
             const querySolution = "http://" + config.apiServer + ":" + config.port + "/api/solution/upload"
             const formData = new FormData()
-            let solutionsName = ""
+            // let solutionsName = ""
+            let solutionSeq = ""
             for (let i = 0; i < solutions.length; i++) {
                 formData.append('files', solutions[i])
-                solutionsName += solutions[i].name + ";"
+                // solutionsName += solutions[i].name + ";"
             }
-            solutionsName = solutions[0].name
+            // solutionsName = solutions[0].name
             axios.post(querySolution, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then((res) => {
                 if (res.data.status === 'success') {
-                    const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
+                    for (let i = 0; i < solutions.length; i++){
+                        const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
+                        axios.post(query, {
+                            Sname: solutions[i].name,
+                            QID: QID,
+                        }).then((res) => {
+                            if (res.data.status === 'success'){
+                                solutionSeq += res.data.uuid + ";"
+                            } else {
+                                alert(res.data.status)
+                            }
+                        })
+                    }
+                    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update" + QID
                     axios.post(query, {
-                        Sname: solutionsName,
-                        QID: QID,
+                        SolutionSeq: solutionSeq,
                     }).then((res) => {
                         if (res.data.status === 'success') {
-                            router.push('/question/' + QID)
+                            router.push('/customize_solution/' + QID)
                         } else {
                             alert(res.data.status)
                         }
                     })
+                    //router.push('/customize_solution/' + QID + '/' + solutionsName)
+                    // const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
+                    // axios.post(query, {
+                    //     Sname: solutionsName,
+                    //     QID: QID,
+                    // }).then((res) => {
+                    //     if (res.data.status === 'success') {
+                    //         router.push('/question/' + QID)
+                    //     } else {
+                    //         alert(res.data.status)
+                    //     }
+                    // })
                 } else {
                     alert(res.data.status)
                 }
@@ -70,6 +96,18 @@ const uploadSolution = () => {
         }
     }
 }
+
+// const getQuestionType = async () => {
+//     const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
+//     axios.get(query).then((res) => {
+//         if (res.data.status === 'success') {
+//             questionType.value = res.data.question.Type
+//         } else {
+//             alert(res.data.status)
+//         }
+//     })
+// }
+// getQuestionType()
 
 /**
 const onFileChange = (event) => {
@@ -105,6 +143,7 @@ const onFileChange = (event) => {
         <h2 class="text-left font-medium text-gray-900">
           <div class="text-2xl">Upload Solution</div>
         </h2>
+        {{ questionType }}
         <div class="creation_form">
           <div class="border rounded-lg shadow-lg bg-white px-4">
             <div class="mt-4 mb-4">
@@ -118,8 +157,18 @@ const onFileChange = (event) => {
                   required
                   type="file"
                   v-on:change="onFileChange"
-                  multiple
+                  v-if="questionType === 'single solution'"
               />
+                <input
+                    accept=".py"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder=""
+                    required
+                    type="file"
+                    v-on:change="onFileChange"
+                    v-if="questionType === 'multiple solutions' || questionType === 'multi-step solutions'"
+                    multiple
+                />
             </div>
           </div>
         </div>

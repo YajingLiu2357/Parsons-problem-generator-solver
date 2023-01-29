@@ -6,6 +6,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore} from 'vuex'
 import FormData from 'form-data'
 import { VueDraggableNext } from 'vue-draggable-next'
+import { nestedDraggable } from 'vue-draggable-next'
+// import {BaseTree, Draggable, ExternalDataHandler, pro} from '@he-tree/vue'
+// import '@he-tree/vue/style/default.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,13 +18,51 @@ let pool = {
     code: reactive([]),
     answer: reactive([]),
 }
-const qid = route.params.QID
+const QID = route.params.QID
 const description = ref('')
 description.value = ""
 const sequence = reactive([])
 const bid = ref('')
+// const treeData = reactive([
+//     {
+//         text: 'Projects',
+//         children: [
+//             {
+//                 text: 'Frontend',
+//                 children: [
+//                     {
+//                         text: 'Vue',
+//                         children: [
+//                             {},
+//                         ],
+//                     },
+//                 ],
+//             },
+//         ],
+//     },
+// ])
+// const list = reactive([
+//     {
+//         name: "task 1",
+//         tasks: [
+//             {
+//                 name: "task 2",
+//                 tasks: []
+//             }
+//         ]
+//     }, 
+//     {
+//         name: "task 3",
+//         tasks: [
+//             {
+//                 name: "task 4",
+//                 tasks: []
+//             }
+//         ]
+//     }
+// ])
 const getDescription = async () => {
-   const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + qid
+   const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
             description.value = res.data.question.Description
@@ -29,7 +70,7 @@ const getDescription = async () => {
     })
 }
 const getFragments = async () => {
-    const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment/" + qid
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment/" + QID
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
             for (let i = 0; i < res.data.fragments.length; i++) {
@@ -93,6 +134,17 @@ getFragments()
                 </div>
             </div>
         </VueDraggableNext>
+        <!-- <nested-draggable class = "draggable-list" :list="pool.answer" group = "pool">
+            <div v-for="(fragment, i) in pool.answer" :key="i">
+                <div class="bg-white mt-3 p-2 shadow border rounded">
+                    <p>{{ fragment }}</p>
+                </div>
+            </div>
+        </nested-draggable> -->
+        <!--<Draggable v-model="treeData"></Draggable>-->
+        <!-- <nested-draggalbe :tasks="list"></nested-draggalbe>
+        <rawDisplayer class="col-3" :value="list" title="List"></rawDisplayer> -->
+
     </div>
     </div>
     <button

@@ -12,6 +12,7 @@ const route = useRoute()
 const name = ref("")
 const description = ref("")
 const scope = ref("")
+const type = ref("")
 
 const createQuestion = () => {
   if (name.value === "" || description.value === "" || scope.value === "") {
@@ -23,6 +24,7 @@ const createQuestion = () => {
         Qname: name.value,
         Scope: scope.value,
         Description: description.value,
+        Type: type.value,
       }).then((res) => {
         if (res.data.status === 'success') {
           router.push('/upload_solution/' + res.data.uuid)
@@ -81,6 +83,20 @@ const createQuestion = () => {
                   required
                   type="text"
               />
+            </div>
+            <div class="mt-4 mb-4">
+              <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Type</label
+              >
+              <select
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  v-model="type"
+                  required
+              >
+                <option value="single solution">single solution</option>
+                <option value="multiple solutions">multiple solutions</option>
+                <option value="multi-step solutions">multi-step solutions</option>
+              </select>
             </div>
           </div>
         </div>
