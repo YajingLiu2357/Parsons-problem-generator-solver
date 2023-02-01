@@ -83,6 +83,9 @@ class UpdateDifficultyLevelData(BaseModel):
     BlockSeq: str
     SID: str
 
+class UpdateSolutionData(BaseModel):
+    Type: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -151,3 +154,8 @@ def create_block(blockData: BlockData):
 def update_difficulty_level(DLID: str, updateDifficultyLevelData: UpdateDifficultyLevelData):
     from db.database import update_difficulty_level
     return update_difficulty_level(DLID, updateDifficultyLevelData.Level, updateDifficultyLevelData.BlockSeq, updateDifficultyLevelData.SID)
+
+@app.post('/api/solution/update/{SID}')
+def update_solution(SID: str, updateSolutionData: UpdateSolutionData):
+    from db.database import update_solution_prototype
+    return update_solution_prototype(SID, updateSolutionData.Type)

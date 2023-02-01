@@ -173,13 +173,25 @@ const updateDifficultyLevel = async () => {
         }
     })
 }
+
+const confirm = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/update/" + SID[0]
+    axios.post(query, {
+        Type: solutionType.value,
+    }).then((res) => {
+        if (res.data.status === 'success') {
+            alert("Confirm Success")
+            router.push(('/question/' + QID))
+        }
+    })
+}
 getQuestion()
 getBID()
 getSID()
 </script>
 <template>
   <div class="container mx-auto sm:px-4 mt-5 mb-5">
-    <h2 class="text-left font-medium text-gray-900">
+    <h2 class="text-center mb-6 font-medium text-gray-900">
           <div class="text-2xl">Customize Solution</div>
         </h2>
     <div class="flex flex-wrap ">
@@ -345,10 +357,11 @@ getSID()
     </div>
     </div>
     <button
-            class="float-right group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            class="float-right mt-7 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             type="submit"
+            @click="confirm"
         >
-          Check
+          Confirm
         </button> 
   </div>
 </template>

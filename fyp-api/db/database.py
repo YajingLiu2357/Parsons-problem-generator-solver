@@ -1172,6 +1172,30 @@ def get_sequence_prototype(BID: str):
         playload['status'] = 'error'
         return playload
 
+def update_solution_prototype(SID: str, Type: str):
+    """ Update solution prototype
+
+    Args: 
+        SID (str): solution id
+        Type (str): solution type
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Solution` SET `Type` = %s WHERE `SID` = %s"
+                cursor.execute(sql, (Type, SID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
