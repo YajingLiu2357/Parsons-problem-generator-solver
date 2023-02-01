@@ -68,6 +68,21 @@ class FeedbackData(BaseModel):
     Content: str
     DID: str
 
+class DifficultyLevelData(BaseModel):
+    Level: str
+    BlockSeq: str
+    SID: str
+
+class BlockData(BaseModel):
+    Type: str
+    FragmentSeq: str
+    DLID: str
+
+class UpdateDifficultyLevelData(BaseModel):
+    Level: str
+    BlockSeq: str
+    SID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -121,3 +136,18 @@ def get_sequence(BID: str):
 def create_distractor(distractorData: DistractorData):
     from db.database import create_distractor
     return create_distractor(distractorData.Code, distractorData.Reason, distractorData.FID)
+
+@app.post('/api/difficulty_level/create')
+def create_difficulty_level(difficultyLevelData: DifficultyLevelData):
+    from db.database import create_difficulty_level
+    return create_difficulty_level(difficultyLevelData.Level, difficultyLevelData.BlockSeq, difficultyLevelData.SID)
+
+@app.post('/api/block/create')
+def create_block(blockData: BlockData):
+    from db.database import create_block
+    return create_block(blockData.Type, blockData.FragmentSeq, blockData.DLID)
+
+@app.post('/api/difficulty_level/update/{DLID}')
+def update_difficulty_level(DLID: str, updateDifficultyLevelData: UpdateDifficultyLevelData):
+    from db.database import update_difficulty_level
+    return update_difficulty_level(DLID, updateDifficultyLevelData.Level, updateDifficultyLevelData.BlockSeq, updateDifficultyLevelData.SID)

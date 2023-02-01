@@ -61,21 +61,17 @@ const uploadSolution = () => {
                         }).then((res) => {
                             if (res.data.status === 'success'){
                                 solutionSeq += res.data.uuid + ";"
+                                const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update/" + QID
+                                axios.post(query, {
+                                    SolutionSeq: solutionSeq,
+                                }).then((res) => {
+                                })
                             } else {
                                 alert(res.data.status)
                             }
                         })
                     }
-                    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update/" + QID
-                    axios.post(query, {
-                        SolutionSeq: solutionSeq,
-                    }).then((res) => {
-                        if (res.data.status === 'success') {
-                            router.push('/customize_solution/' + QID)
-                        } else {
-                            alert(res.data.status)
-                        }
-                    })
+                    router.push('/customize_solution/' + QID)
                     //router.push('/customize_solution/' + QID + '/' + solutionsName)
                     // const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
                     // axios.post(query, {
@@ -144,7 +140,6 @@ const onFileChange = (event) => {
         <h2 class="text-left font-medium text-gray-900">
           <div class="text-2xl">Upload Solution</div>
         </h2>
-        {{ questionType }}
         <div class="creation_form">
           <div class="border rounded-lg shadow-lg bg-white px-4">
             <div class="mt-4 mb-4">
