@@ -1209,7 +1209,8 @@ def get_fragment_prototype(QID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM `Fragment` WHERE `BID` IN (SELECT `BID` FROM `Block` WHERE `DLID` IN (SELECT `DLID` FROM `DifficultyLevel` WHERE `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` =%s)))"
+                # For single solution
+                sql = "SELECT * FROM `Fragment` WHERE `BID` IN (SELECT `BID` FROM `Block` WHERE `DLID` IN (SELECT `DLID` FROM `DifficultyLevel` WHERE `Level` = '1' AND `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` =%s)))"
                 cursor.execute(sql, (QID))
                 result = cursor.fetchall()
                 if (len(result) == 0):
@@ -1218,6 +1219,8 @@ def get_fragment_prototype(QID: str):
                 playload['status'] = 'success'
                 playload['fragments'] = result
                 return playload
+                # For multiple solutions
+                # Add if condition to check if the solution is multiple
     except:
         playload['status'] = 'error'
         return playload
