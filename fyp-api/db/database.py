@@ -720,11 +720,12 @@ def delete_fragment(FID: str):
         playload['status'] = 'error'
         return playload
 
-def create_distractor(Code: str, FID: str):
+def create_distractor(Code: str, Reason: str, FID: str):
     """ Create a new distractor
     
     Args:
         Code (str): code
+        Reason (str): reason to set this distractor
         FID (str): fragment id
     
     Returns:
@@ -740,9 +741,9 @@ def create_distractor(Code: str, FID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "INSERT INTO `Distractor` (`DID`, `Code`, `FID`) VALUES (%s, %s, %s)"
+                    sql = "INSERT INTO `Distractor` (`DID`, `Code`, `Reason`, `FID`) VALUES (%s, %s, %s, %s)"
                     DID = str(uuid.uuid4())
-                    cursor.execute(sql, (DID, Code, FID))
+                    cursor.execute(sql, (DID, Code, Reason, FID))
                     connection.commit()
                     playload['status'] = 'success'
                     playload['uuid'] = DID
@@ -778,12 +779,13 @@ def get_distractor(DID: str):
         playload['status'] = 'error'
         return playload
 
-def update_distractor(DID: str, Code: str, FID: str):
+def update_distractor(DID: str, Code: str, Reason: str, FID: str):
     """ Update distractor information
 
     Args: 
         DID (str): distractor id
         Code (str): code
+        Reason (str): reason to set this distractor
         FID (str): fragment id
     
     Returns:
@@ -799,8 +801,8 @@ def update_distractor(DID: str, Code: str, FID: str):
                     playload['status'] = 'error'
                     return playload
                 else:
-                    sql = "UPDATE `Distractor` SET `Code`=%s, `FID`=%s WHERE `DID`=%s"
-                    cursor.execute(sql, (Code, FID, DID))
+                    sql = "UPDATE `Distractor` SET `Code`=%s, `Reason`=%s, `FID`=%s WHERE `DID`=%s"
+                    cursor.execute(sql, (Code, Reason, FID, DID))
                     connection.commit()
                     playload['status'] = 'success'
                     return playload
@@ -831,95 +833,6 @@ def delete_distractor(DID: str):
         playload['status'] = 'error'
         return playload
 
-def create_feedback(Content: str, DID: str):
-    """ Create a new feedback
-    
-    Args:
-        Content (str): content
-        DID (str): distractor id
-    
-    Returns:
-        dict: status(success, error), uuid
-    """
-    playload = {'status': '', 'uuid': ''}
-    try:
-        connection = create_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                result = get_distractor(DID)
-                if result['status'] == 'error':
-                    playload['status'] = 'error'
-                    return playload
-                else:
-                    sql = "INSERT INTO `Feedback` (`FBID`, `Content`, `DID`) VALUES (%s, %s, %s)"
-                    FBID = str(uuid.uuid4())
-                    cursor.execute(sql, (FBID, Content, DID))
-                    connection.commit()
-                    playload['status'] = 'success'
-                    playload['uuid'] = FBID
-                    return playload
-    except:
-        playload['status'] = 'error'
-        return playload
-
-def get_feedback(FBID: str):
-    """ Get feedback information
-
-    Args: 
-        FBID (str): feedback id
-    
-    Returns:
-        dict: status(success, error), feedback
-    """
-    playload = {'status': '', 'feedback': ''}
-    try:
-        connection = create_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                sql = "SELECT * FROM `Feedback` WHERE `FBID`=%s"
-                cursor.execute(sql, (FBID))
-                result = cursor.fetchall()
-                if (len(result) == 0):
-                    playload['status'] = 'error'
-                    return playload
-                playload['status'] = 'success'
-                playload['feedback'] = result[0]
-                return playload
-    except:
-        playload['status'] = 'error'
-        return playload
-
-def update_feedback(FBID: str, Content: str, DID: str):
-    """ Update feedback information
-
-    Args: 
-        FBID (str): feedback id
-        Content (str): content
-        DID (str): distractor id
-    
-    Returns:
-        dict: status(success, error)
-    """
-    playload = {'status': ''}
-    try:
-        connection = create_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                result = get_distractor(DID)
-                if result['status'] == 'error':
-                    playload['status'] = 'error'
-                    return playload
-                else:
-                    sql = "UPDATE `Feedback` SET `Content`=%s, `DID`=%s WHERE `FBID`=%s"
-                    cursor.execute(sql, (Content, DID, FBID))
-                    connection.commit()
-                    playload['status'] = 'success'
-                    return playload
-    except:
-        playload['status'] = 'error'
-        return playload
-
-def delete_feedback(FBID: str):
     """ Delete feedback
 
     Args: 
@@ -941,7 +854,6 @@ def delete_feedback(FBID: str):
     except:
         playload['status'] = 'error'
         return playload
-
 def create_difficulty_level(Level: str, BlockSeq: str, SID: str):
     """ Create a new difficulty level
     
@@ -1234,7 +1146,7 @@ def get_sequence_prototype(BID: str):
     Returns:
         dict: status(success, error), fragments
     """
-    playload = {'status': '', 'sequence': []}
+    playload = {'status': '', 'sequence': [], 'FID': []}
     try:
         connection = create_connection()
         with connection:
@@ -1249,6 +1161,7 @@ def get_sequence_prototype(BID: str):
                 FragmentSeq = FragmentSeq.split(';')
                 FragmentSeq.pop()
                 for fragment in FragmentSeq:
+                    playload['FID'].append(fragment)
                     sql = "SELECT Code FROM `Fragment` WHERE `FID` =%s"
                     cursor.execute(sql, (fragment))
                     result = cursor.fetchone()

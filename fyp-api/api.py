@@ -59,6 +59,15 @@ class SolutionData(BaseModel):
     Type: str
     QID: str
 
+class DistractorData(BaseModel):
+    Code: str
+    Reason: str
+    FID: str
+
+class FeedbackData(BaseModel):
+    Content: str
+    DID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -107,3 +116,8 @@ def get_fragment(QID: str):
 def get_sequence(BID: str):
     from db.database import get_sequence_prototype
     return get_sequence_prototype(BID)
+
+@app.post('/api/distractor/create')
+def create_distractor(distractorData: DistractorData):
+    from db.database import create_distractor
+    return create_distractor(distractorData.Code, distractorData.Reason, distractorData.FID)
