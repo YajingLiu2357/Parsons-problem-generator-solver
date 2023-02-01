@@ -56,6 +56,7 @@ class UpdateQuestionData(BaseModel):
     SolutionSeq: str
 class SolutionData(BaseModel):
     Sname: str
+    Type: str
     QID: str
 
 @app.get("/api/")
@@ -90,7 +91,7 @@ async def upload_solution(files: List[UploadFile] = File(...)):
 @app.post('/api/solution/create')
 def create_solution(solutionData: SolutionData):
     from db.database import create_solution
-    return create_solution(solutionData.Sname, solutionData.QID)
+    return create_solution(solutionData.Sname, solutionData.Type, solutionData.QID)
 
 @app.get('/api/question/{QID}')
 def get_question(QID: str):

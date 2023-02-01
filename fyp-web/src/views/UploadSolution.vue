@@ -12,7 +12,7 @@ const route = useRoute()
 const file = new File([],'')
 const solutions = reactive([] as Array<File>)
 const QID = route.params.QID
-const questionType = ref("multiple solutions")
+const questionType = ref("")
 
 const initFile = () => {
     if (solutions.length > 0){
@@ -56,6 +56,7 @@ const uploadSolution = () => {
                         const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
                         axios.post(query, {
                             Sname: solutions[i].name,
+                            Type: "not fixed order",
                             QID: QID,
                         }).then((res) => {
                             if (res.data.status === 'success'){
@@ -65,7 +66,7 @@ const uploadSolution = () => {
                             }
                         })
                     }
-                    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update" + QID
+                    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update/" + QID
                     axios.post(query, {
                         SolutionSeq: solutionSeq,
                     }).then((res) => {
@@ -97,17 +98,17 @@ const uploadSolution = () => {
     }
 }
 
-// const getQuestionType = async () => {
-//     const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
-//     axios.get(query).then((res) => {
-//         if (res.data.status === 'success') {
-//             questionType.value = res.data.question.Type
-//         } else {
-//             alert(res.data.status)
-//         }
-//     })
-// }
-// getQuestionType()
+const getQuestionType = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            questionType.value = res.data.question.Type
+        } else {
+            alert(res.data.status)
+        }
+    })
+}
+getQuestionType()
 
 /**
 const onFileChange = (event) => {

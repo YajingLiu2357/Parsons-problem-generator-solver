@@ -384,7 +384,7 @@ def create_solution(Sname: str, Type: str, QID: str):
     
     Args:
         Sname (str): solution file name
-        Type (str): solution types (fixed order, not fixed order)
+        Type (str): solution types (fixed order, not fixed order, insert key code )
         QID (str): question id
     
     Returns:
@@ -404,7 +404,7 @@ def create_solution(Sname: str, Type: str, QID: str):
                     SID = str(uuid.uuid4())
                     cursor.execute(sql, (SID, Sname, Type, QID))
                     connection.commit()
-                    level = create_difficulty_level('', '', SID)
+                    level = create_difficulty_level('1', '', SID)
                     DLID = level['uuid']
                     cut_solution(Sname, DLID)
                     playload['status'] = 'success'
@@ -447,7 +447,7 @@ def update_solution(SID: str, Sname: str, Type: str, QID: str):
     Args: 
         SID (str): solution id
         Sname (str): solution name
-        Type (str): solution types (fixed order, not fixed order)
+        Type (str): solution types (fixed order, not fixed order, insert key code)
         QID (str): question id
     
     Returns:
@@ -499,7 +499,7 @@ def create_block(Type: str, FragmentSeq: str, DLID: str):
     """ Create a new block
     
     Args:
-        Type (str): block types (single fragment, multiple fragments(context), multiple fragments (unit)))
+        Type (str): block types (single fragment, multiple fragments(context), multiple fragments (unit), multiple fragments (standard)))
         FragmentSeq (str): sequence of fragments
         DLID (str): difficulty level id   
     Returns:
@@ -558,7 +558,7 @@ def update_block(BID: str, Type: str, FragmentSeq: str, DLID: str):
 
     Args: 
         BID (str): block id
-        Type (str): block type (single fragment, multiple fragments(context), multiple fragments (unit))
+        Type (str): block type (single fragment, multiple fragments(context), multiple fragments (unit), multiple fragments (standard))
         FragmentSeq (str): sequence of fragments
         DLID (str): difficulty level id    
     
@@ -1183,11 +1183,13 @@ def create_fragment_prototype(fragments: list, DLID: str):
     playload = {'status': ''}
     try:
         fragmentSeq = ""
-        block = create_block('', fragmentSeq, DLID)
+        block = create_block('multiple fragments (standard)', fragmentSeq, DLID)
         for fragment in fragments:
             playload = create_fragment(fragment, '', block['uuid'])
             fragmentSeq += playload['uuid'] + ';'
-        update_block(block['uuid'], '', fragmentSeq, DLID)
+        update_block(block['uuid'], 'multiple fragments (standard)', fragmentSeq, DLID)
+        level = get_difficulty_level(DLID)
+        update_difficulty_level(DLID, level['difficulty_level'].Level, block['uuid'], level['difficulty_level'].SID)
         playload['status'] = 'success'
     except:
         playload['status'] = 'error'
@@ -1299,5 +1301,5 @@ if __name__ == '__main__':
     # res = create_solution("ex.py", "480a1e16-9d9e-44b6-8aa3-48e9d693f19a")
     # res = delete_question("5b7834de-b884-45b6-8239-fba245c5d526")
     # res = get_fragment_prototype("a7210de1-f7a5-4e4f-8307-cafddbdd6550")
-    res = get_sequence_prototype("365e13a6-2fc4-4df3-b313-285c4e3bb044")
+    res = get_fragment("050c0534-d1cd-49bf-91df-7540e568e6c2")
     print(res)
