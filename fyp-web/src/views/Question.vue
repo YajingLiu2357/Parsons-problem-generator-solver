@@ -6,9 +6,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore} from 'vuex'
 import FormData from 'form-data'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { nestedDraggable } from 'vue-draggable-next'
-// import {BaseTree, Draggable, ExternalDataHandler, pro} from '@he-tree/vue'
-// import '@he-tree/vue/style/default.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,45 +21,6 @@ const description = ref('')
 description.value = ""
 const sequence = reactive([])
 const bid = ref('')
-
-// const treeData = reactive([
-//     {
-//         text: 'Projects',
-//         children: [
-//             {
-//                 text: 'Frontend',
-//                 children: [
-//                     {
-//                         text: 'Vue',
-//                         children: [
-//                             {},
-//                         ],
-//                     },
-//                 ],
-//             },
-//         ],
-//     },
-// ])
-// const list = reactive([
-//     {
-//         name: "task 1",
-//         tasks: [
-//             {
-//                 name: "task 2",
-//                 tasks: []
-//             }
-//         ]
-//     }, 
-//     {
-//         name: "task 3",
-//         tasks: [
-//             {
-//                 name: "task 4",
-//                 tasks: []
-//             }
-//         ]
-//     }
-// ])
 
 // getName()
 
@@ -157,17 +115,6 @@ getFragments()
                 </div>
             </div>
         </VueDraggableNext>
-        <!-- <nested-draggable class = "draggable-list" :list="pool.answer" group = "pool">
-            <div v-for="(fragment, i) in pool.answer" :key="i">
-                <div class="bg-white mt-3 p-2 shadow border rounded">
-                    <p>{{ fragment }}</p>
-                </div>
-            </div>
-        </nested-draggable> -->
-        <!--<Draggable v-model="treeData"></Draggable>-->
-        <!-- <nested-draggalbe :tasks="list"></nested-draggalbe>
-        <rawDisplayer class="col-3" :value="list" title="List"></rawDisplayer> -->
-
     </div>
     </div>
     <button
