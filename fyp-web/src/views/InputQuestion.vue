@@ -27,13 +27,14 @@ const createQuestion = () => {
         Type: type.value,
       }).then((res) => {
         if (res.data.status === 'success') {
-          router.push('/upload_solution/' + res.data.uuid)
+          router.push('/input_question_type/' + res.data.uuid)
+          // router.push('/upload_solution/' + res.data.uuid)
         } else {
           alert(res.data.status)
         }
       })
     } else {
-      alert("You do not have the authority to add a new product.")
+      alert("You do not have the authority to add a new question.")
     }
   }
 }
@@ -84,28 +85,11 @@ const createQuestion = () => {
                   type="text"
               />
             </div>
-            <div class="mt-4 mb-4">
-              <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Type</label
-              >
-              <select
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  v-model="type"
-                  required
-              >
-                <option value="single solution">single solution</option>
-                <option value="multiple solutions">multiple solutions</option>
-                <option value="multi-step solutions">multi-step solutions</option>
-              </select>
-            </div>
           </div>
         </div>
-        <button
-            class="group relative w-full flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            type="submit"
-            @click="createQuestion"
-        >
-          Create
+        <button @click="createQuestion" type="button" class="group relative w-full flex justify-center py-3 px-6 border border-transparent font-large rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 text-sm text-center items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Choose Question Type
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button>
       </div>
     </div>

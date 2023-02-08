@@ -12,7 +12,10 @@ const route = useRoute()
 const file = new File([],'')
 const solutions = reactive([] as Array<File>)
 const QID = route.params.QID
-const questionType = ref("")
+const questionType = route.params.Type
+const solutionType = ref('')
+const singleSolution = ref(true)
+const jumpCustomize = ref(false)
 
 const initFile = () => {
     if (solutions.length > 0){
@@ -52,7 +55,6 @@ const uploadSolution = () => {
                 }
             }).then((res) => {
                 if (res.data.status === 'success') {
-                    alert("upload success")
                     for (let i = 0; i < solutions.length; i++){
                         const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
                         axios.post(query, {
@@ -62,11 +64,16 @@ const uploadSolution = () => {
                         }).then((res) => {
                             if (res.data.status === 'success'){
                                 solutionSeq += res.data.uuid + ";"
-                                const query = "http://" + config.apiServer + ":" + config.port + "/api/question/update/" + QID
+                                const query = "http://" + config.apiServer + ":" + config.port + "/api/question_solution_seq/update/" + QID
                                 axios.post(query, {
                                     SolutionSeq: solutionSeq,
                                 }).then((res) => {
-                                    router.push('/customize_solution/' + QID)
+                                    if (jumpCustomize.value === false){
+                                        router.push('/customize_solution/' + QID)
+                                    } else {
+                                        router.push('/question/' + QID)
+                                    }
+                                    // router.push('/customize_solution/' + QID)
                                 })
                             } else {
                                 alert(res.data.status)
@@ -91,22 +98,35 @@ const uploadSolution = () => {
                 }
             })
         } else {
-            alert("You do not have the authority to add a new product.")
+            alert("You do not have the authority to add a new question.")
         }
     }
 }
 
-const getQuestionType = async () => {
-    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
-    axios.get(query).then((res) => {
-        if (res.data.status === 'success') {
-            questionType.value = res.data.question.Type
-        } else {
-            alert(res.data.status)
-        }
-    })
+// const getQuestionType = async () => {
+//     const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
+//     axios.get(query).then((res) => {
+//         if (res.data.status === 'success') {
+//             questionType.value = res.data.question.Type
+//         } else {
+//             alert(res.data.status)
+//         }
+//     })
+// }
+// getQuestionType()
+const checkQuestionType = () =>{
+    if (questionType === 'traditional' || questionType === 'context' || questionType === 'insert key code' || questionType === 'check only inside block' || questionType === 'multiple steps' || questionType === 'link together' || questionType === 'algorithm analysis'){
+        singleSolution.value = true
+    } else {
+        singleSolution.value = false    
+    }
+    if (questionType === 'traditional'){
+        jumpCustomize.value = true
+    } else {
+        jumpCustomize.value = false
+    }
 }
-getQuestionType()
+checkQuestionType()
 
 /**
 const onFileChange = (event) => {
@@ -155,7 +175,7 @@ const onFileChange = (event) => {
                   required
                   type="file"
                   v-on:change="onFileChange"
-                  v-if="questionType === 'single solution'"
+                  v-if="singleSolution"
               />
                 <input
                     accept=".py"
@@ -164,7 +184,7 @@ const onFileChange = (event) => {
                     required
                     type="file"
                     v-on:change="onFileChange"
-                    v-if="questionType === 'multiple solutions' || questionType === 'multi-step solutions'"
+                    v-if="!singleSolution"
                     multiple
                 />
             </div>

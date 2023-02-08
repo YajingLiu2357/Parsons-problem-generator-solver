@@ -75,23 +75,6 @@ const getSequence = async () => {
     })
 }
 const check = () =>{
-    // let correct = true
-    // console.log("pool answer:" + pool.answer)
-    // console.log(sequence.length)
-    // for (let i = 0; i < 1; i++) {
-    // // for (let i = 0; i < sequence.length; i++) {
-    //     console.log(pool.answer[i])
-    //     console.log(sequence[i])
-    //     if (sequence[i] !== pool.answer[i]) {
-    //         correct = false
-    //         break
-    //     }
-    // }
-    // if (correct) {
-    //     alert("Correct!")
-    // } else {
-    //     alert("Wrong!")
-    // }
     checked.value = true
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){

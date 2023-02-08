@@ -52,8 +52,10 @@ class QuestionData(BaseModel):
     Description: str
     Type: str
 
-class UpdateQuestionData(BaseModel):
+class UpdateQuestionSolutionSeqData(BaseModel):
     SolutionSeq: str
+class UpdateQuestionTypeData(BaseModel):
+    Type: str
 class SolutionData(BaseModel):
     Sname: str
     Type: str
@@ -105,10 +107,15 @@ def create_question(questionData: QuestionData):
     from db.database import create_question_prototype
     return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description, questionData.Type)
 
-@app.post('/api/question/update/{QID}')
-def update_question(QID: str, updateQuestionData: UpdateQuestionData):
-    from db.database import update_question_prototype
-    return update_question_prototype(QID, updateQuestionData.SolutionSeq)
+@app.post('/api/question_solution_seq/update/{QID}')
+def update_question_solution_seq(QID: str, updateQuestionSolutionSeqData: UpdateQuestionSolutionSeqData):
+    from db.database import update_question_solution_seq
+    return update_question_solution_seq(QID, updateQuestionSolutionSeqData.SolutionSeq)
+
+@app.post('/api/question_type/update/{QID}')
+def update_question_type(QID: str, updateQuestionTypeData: UpdateQuestionTypeData):
+    from db.database import update_question_type
+    return update_question_type(QID, updateQuestionTypeData.Type)
 
 @app.post('/api/solution/upload')
 async def upload_solution(files: List[UploadFile] = File(...)):
