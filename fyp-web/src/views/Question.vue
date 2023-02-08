@@ -18,11 +18,13 @@ let pool = {
     code: reactive([]),
     answer: reactive([]),
 }
+
 const QID = route.params.QID
 const description = ref('')
 description.value = ""
 const sequence = reactive([])
 const bid = ref('')
+
 // const treeData = reactive([
 //     {
 //         text: 'Projects',
@@ -61,6 +63,9 @@ const bid = ref('')
 //         ]
 //     }
 // ])
+
+// getName()
+
 const getDescription = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
     axios.get(query).then((res) => {
@@ -76,7 +81,7 @@ const getFragments = async () => {
             for (let i = 0; i < res.data.fragments.length; i++) {
                 bid.value = res.data.fragments[i].BID
                 console.log(bid.value)
-                pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))
             }
             getSequence()
         }
@@ -109,6 +114,14 @@ const check = () =>{
         alert("Wrong!")
     }
 }
+const decreaseIndent = (i: number) =>{
+    pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
+    
+}
+const increaseIndent = (i: number) =>{
+    pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
+    
+}
 getDescription()
 getFragments()
 </script>
@@ -129,8 +142,18 @@ getFragments()
         <h6>Answer</h6>
         <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" >
             <div v-for="(fragment, i) in pool.answer" :key="i">
-                <div class="bg-white mt-3 p-2 shadow border rounded">
-                    <p>{{ fragment }}</p>
+                <div class="bg-white mt-3 p-2 shadow border rounded">                        
+                    <p>
+                        <button @click="decreaseIndent(i)" title="Decrease Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <svg class="w-4 h-4 rotate-180" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="sr-only">Decrease Indent</span>
+                        </button>
+                        <button @click="increaseIndent(i)" title="Increase Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="sr-only">Increase Indent</span>
+                        </button>
+                        {{ fragment }}
+                    </p>
                 </div>
             </div>
         </VueDraggableNext>
