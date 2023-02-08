@@ -572,16 +572,21 @@ def update_block(BID: str, Type: str, FragmentSeq: str, DLID: str):
             with connection.cursor() as cursor:
                 result = get_difficulty_level(DLID)
                 if result['status'] == 'error':
-                    playload['status'] = 'error'
+                    playload['status'] = 'error 2'
                     return playload
                 else:
-                    sql = "UPDATE `Block` SET `Type`=%s, `FragmentSeq`=%s, `DLID`=%s WHERE `BID`=%s"
-                    cursor.execute(sql, (Type, FragmentSeq, DLID, BID))
-                    connection.commit()
-                    playload['status'] = 'success'
-                    return playload
+                    result = get_block(BID)
+                    if result['status'] == 'error':
+                        playload['status'] = 'error 3'
+                        return playload
+                    else:
+                        sql = "UPDATE `Block` SET `Type`=%s, `FragmentSeq`=%s, `DLID`=%s WHERE `BID`=%s"
+                        cursor.execute(sql, (Type, FragmentSeq, DLID, BID))
+                        connection.commit()
+                        playload['status'] = 'success'
+                        return playload
     except:
-        playload['status'] = 'error'
+        playload['status'] = 'error 1'
         return playload
 
 def delete_block(BID: str):
@@ -833,27 +838,6 @@ def delete_distractor(DID: str):
         playload['status'] = 'error'
         return playload
 
-    """ Delete feedback
-
-    Args: 
-        FBID (str): feedback id
-    
-    Returns:
-        dict: status(success, error)
-    """
-    playload = {'status': ''}
-    try:
-        connection = create_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                sql = "DELETE FROM `Feedback` WHERE `FBID`=%s"
-                cursor.execute(sql, (FBID))
-                connection.commit()
-                playload['status'] = 'success'
-                return playload
-    except:
-        playload['status'] = 'error'
-        return playload
 def create_difficulty_level(Level: str, BlockSeq: str, SID: str):
     """ Create a new difficulty level
     
@@ -1075,6 +1059,7 @@ def cut_solution(fname: str, DLID: str):
             for line in lines:
                 if not line.isspace():
                     playload['fragments'].append(line.decode('utf-8'))
+        print("enter cut_solution")
         create_fragment_prototype(playload['fragments'], DLID)
         playload['status'] = 'success'
         return playload
@@ -1094,12 +1079,15 @@ def create_fragment_prototype(fragments: list, DLID: str):
     """
     playload = {'status': ''}
     try:
+        print("enter create_fragment_prototype")
         fragmentSeq = ""
         block = create_block('multiple fragments (standard)', fragmentSeq, DLID)
         for fragment in fragments:
             playload = create_fragment(fragment, '', block['uuid'])
             fragmentSeq += playload['uuid'] + ';'
-        update_block(block['uuid'], 'multiple fragments (standard)', fragmentSeq, DLID)
+        print(fragmentSeq)
+        playload=update_block(block['uuid'], 'multiple fragments', fragmentSeq, DLID)
+        print(playload)
         level = get_difficulty_level(DLID)
         update_difficulty_level(DLID, level['difficulty_level'].Level, block['uuid'], level['difficulty_level'].SID)
         playload['status'] = 'success'
@@ -1241,5 +1229,7 @@ if __name__ == '__main__':
     # res = create_solution("ex.py", "480a1e16-9d9e-44b6-8aa3-48e9d693f19a")
     # res = delete_question("5b7834de-b884-45b6-8239-fba245c5d526")
     # res = get_fragment_prototype("a7210de1-f7a5-4e4f-8307-cafddbdd6550")
-    res = get_fragment("050c0534-d1cd-49bf-91df-7540e568e6c2")
+    #res = get_fragment("050c0534-d1cd-49bf-91df-7540e568e6c2")
+    #get_sequence_prototype("d1048a84-d8dd-44de-8bd2-4f14aaea6aca")
+    res = update_block("7a8fdfdf-ac47-48c1-b47e-cca885fd1ad2", "multiple fragments", "de9b5ee1-2e51-4a70-821b-aa543e4d6419;ef9b65c4-7fde-42ea-8ceb-f702265d7368;15ea43cb-2a2d-4140-8e44-900e38f7d2fd;0e85c211-685a-418f-8d10-8328304ea09a;9186012f-97a2-4178-b611-258148912105;21f56142-2611-4a4d-b3e7-d5d7adbb5580;548866bf-19de-48de-87cf-727109863115;", "001c02aa-f1d0-4b55-9218-f8147f50d671")
     print(res)

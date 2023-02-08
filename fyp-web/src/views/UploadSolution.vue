@@ -52,6 +52,7 @@ const uploadSolution = () => {
                 }
             }).then((res) => {
                 if (res.data.status === 'success') {
+                    alert("upload success")
                     for (let i = 0; i < solutions.length; i++){
                         const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
                         axios.post(query, {
@@ -65,13 +66,14 @@ const uploadSolution = () => {
                                 axios.post(query, {
                                     SolutionSeq: solutionSeq,
                                 }).then((res) => {
+                                    router.push('/customize_solution/' + QID)
                                 })
                             } else {
                                 alert(res.data.status)
                             }
                         })
                     }
-                    router.push('/customize_solution/' + QID)
+                    
                     //router.push('/customize_solution/' + QID + '/' + solutionsName)
                     // const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/create"
                     // axios.post(query, {
