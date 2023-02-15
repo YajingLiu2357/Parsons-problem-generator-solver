@@ -98,7 +98,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-4" type="radio" value="check only inside block" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-4" type="radio" value="check-only-inside-block" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Check Only Inside Every Block</h5>
@@ -106,7 +106,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-5" type="radio" value="multiple steps" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-5" type="radio" value="multiple-steps" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Multiple Steps</h5>
@@ -114,7 +114,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-6" type="radio" value="compare data structure implementation" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-6" type="radio" value="compare-data-structure-implementation" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Compare Data Structure Implementation</h5>
@@ -122,7 +122,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-7" type="radio" value="compare algorithm" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-7" type="radio" value="compare-algorithm" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Compare Algorithm</h5>
@@ -130,7 +130,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-8" type="radio" value="link together" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-8" type="radio" value="link-together" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Link Together</h5>
@@ -138,7 +138,7 @@ getQuestionInformation()
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
-                <input v-model="type" id="bordered-radio-9" type="radio" value="algorithm analysis" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <input v-model="type" id="bordered-radio-9" type="radio" value="algorithm-analysis" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Algorithm Analysis</h5>

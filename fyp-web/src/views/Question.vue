@@ -31,6 +31,7 @@ const distractorCode = reactive([])
 const distractorReason = reactive([])
 const white = 'white'
 const questionType = route.params.Type
+const blocks = reactive([])
 
 
 const getQuestionInformation = async () => {
@@ -104,12 +105,40 @@ const getFragments = async () => {
                     }
                 })
                 }
-            }else{
-
+            }else if (questionType === "multiple-steps"){
+                for (let i = 0; i < res.data.fragments.length; i++) {
+                bid.value = res.data.fragments[i].BID
+                // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                let temp = "Step"
+                let fragmentInBlock = []
+                for (let j = 0; j < blocks.length; j++){
+                    fragmentInBlock=blocks[j].split(";")
+                    fragmentInBlock.pop()
+                    for (let k = 0; k < fragmentInBlock.length; k++){
+                        if (fragmentInBlock[k] === res.data.fragments[i].FID){
+                            temp = temp + " " + (j+1) + ": "
+                        }
+                    }
+                    fragmentInBlock = []
+                }
+                temp = temp + res.data.fragments[i].Code.replace(/\n/g, '')
+                pool.code.push(temp)
+                indent.push(0)
+                color.push('white')
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
+                axios.get(query).then((res) => {
+                    if (res.data.status === 'success') {
+                        for (let j = 0; j < res.data.distractors.length; j++) {
+                            pool.code.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorCode.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorReason.push(res.data.distractors[j].Reason)
+                        }
+                    }
+                })
             }
             getSequence()
         }
-    })
+    }})
 }
 const getSequence = async () => {
     const query = "http://" + config.apiServer + ":" + config.port + "/api/sequence/" + bid.value
@@ -156,9 +185,10 @@ const check = () =>{
         let tempSeq = sequence[i]
         let tempAnswer = pool.answer[i]
         tempSeq = tempSeq.replace(/\u00a0/g, ' ')
+        tempAnswer = tempAnswer.slice(8, tempAnswer.length)
         tempAnswer = tempAnswer.replace(/\u00a0/g, ' ')
-        // tempSeq = tempSeq.toString().trim()
-        // tempAnswer = tempAnswer.toString().trim()
+        tempSeq = tempSeq.toString().trim()
+        tempAnswer = tempAnswer.toString().trim()
         if (tempSeq !== tempAnswer) {
             color[i] = '#ff6251'
             for(let j = 0; j < distractorCode.length; j++){
@@ -176,22 +206,50 @@ const check = () =>{
     }
 }
 const decreaseIndent = (i: number) =>{
-    pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
-    indent[i] = indent[i] - 1
-    
+    if (questionType === 'multiple-steps'){
+        let tempList = pool.answer[i].split(':')
+        tempList[1] = tempList[1].replace('\u00a0\u00a0\u00a0\u00a0', '')
+        pool.answer[i] = tempList[0] + ':' + tempList[1]
+        indent[i] = indent[i] - 1
+    }else{
+        pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
+        indent[i] = indent[i] - 1
+    }   
 }
 const increaseIndent = (i: number) =>{
-    pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
-    indent[i] = indent[i] + 1
-    
+    if (questionType === 'multiple-steps'){
+        let tempList = pool.answer[i].split(':')
+        tempList[1] = '\u00a0\u00a0\u00a0\u00a0' + tempList[1]
+        pool.answer[i] = tempList[0] + ':' + tempList[1]
+        indent[i] = indent[i] + 1
+    }else{
+        pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
+        indent[i] = indent[i] + 1
+    } 
 }
 const removeBackgroundColor = () =>{
     for (let i = 0; i < color.length; i++) {
         color[i] = 'white'
     }
 }
+// For multiple steps
+const getBlocks= async () =>{
+    if (questionType === 'multiple-steps'){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/block/" + QID
+        axios.get(query).then((res) => {
+            if (res.data.status === 'success') {
+                for (let i = 0; i < res.data.blocks.length; i++) {
+                    blocks.push(res.data.blocks[i].FragmentSeq)
+                }
+                getFragments()
+            }
+        })
+    }else{
+        getFragments()
+    }
+}
 getQuestionInformation()
-getFragments()
+getBlocks()
 </script>
 <template>
   <div class="container mx-auto sm:px-4 mt-5 mb-5">
