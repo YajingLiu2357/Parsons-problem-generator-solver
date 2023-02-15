@@ -30,6 +30,8 @@ const color = reactive([])
 const distractorCode = reactive([])
 const distractorReason = reactive([])
 const white = 'white'
+const questionType = route.params.Type
+
 
 const getQuestionInformation = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -44,7 +46,8 @@ const getFragments = async () => {
     const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment/" + QID
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
-            for (let i = 0; i < res.data.fragments.length; i++) {
+            if (questionType === 'traditional'){
+                for (let i = 0; i < res.data.fragments.length; i++) {
                 bid.value = res.data.fragments[i].BID
                 // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
                 pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))
@@ -61,6 +64,29 @@ const getFragments = async () => {
                     }
                 })
             }
+            }else if (questionType === 'context'){
+                for (let i = 0; i < res.data.fragments.length; i++) {
+                bid.value = res.data.fragments[i].BID
+                // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                if (res.data.fragments[i].Type === 'not context'){
+                    pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
+                }
+                indent.push(0)
+                color.push('white')
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
+                axios.get(query).then((res) => {
+                    if (res.data.status === 'success') {
+                        for (let j = 0; j < res.data.distractors.length; j++) {
+                            pool.code.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorCode.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorReason.push(res.data.distractors[j].Reason)
+                        }
+                    }
+                })
+                }
+            }else {
+
+            }
             getSequence()
         }
     })
@@ -70,8 +96,8 @@ const getSequence = async () => {
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
             for (let i = 0; i < res.data.sequence.length; i++) {
-                // sequence.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
-                sequence.push(res.data.sequence[i].replace(/\n/g, ''))
+                sequence.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                // sequence.push(res.data.sequence[i].replace(/\n/g, ''))
                 let temp = 0
                 for (let j = 0; j < res.data.sequence[i].length; j=j+4){
                     if (res.data.sequence[i][j] === ' ' && res.data.sequence[i][j+1] === ' ' && res.data.sequence[i][j+2] === ' ' && res.data.sequence[i][j+3] === ' '){
@@ -81,12 +107,21 @@ const getSequence = async () => {
                         break
                     }
                 }
-                indentAnswer.push(temp)   
-            }
+                indentAnswer.push(temp)
+                if(questionType=== 'context'){
+                    if (res.data.FragmentType[i] === 'context'){
+                        pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                        indent[i] = temp
+                    }else{
+                        pool.answer.push('Placeholder. Drag it to the left code pool before checking.')
+                    }
+                }  
+            }    
         }
     })
 }
 const check = () =>{
+    alert(indent)
     checked.value = true
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){

@@ -12,7 +12,7 @@ export default createRouter({
     { path: "/login", component: () => import(/* webpackChunkName: "home" */ "../views/Login.vue") },
     //{ path: "/input_question", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestion.vue") },
     { path: "/upload_solution/:QID/:Type", component: () => import(/* webpackChunkName: "home" */ "../views/UploadSolution.vue") },
-    { path: "/question/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/Question.vue") },
+    { path: "/question/:QID/:Type", component: () => import(/* webpackChunkName: "home" */ "../views/Question.vue") },
     { path: "/customize_solution/:QID/:Type", component: () => import(/* webpackChunkName: "home" */ "../views/CustomizeSolution.vue") },
     { path: "/input_question_type/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestionType.vue") },
   ]

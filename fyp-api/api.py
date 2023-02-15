@@ -88,6 +88,9 @@ class UpdateDifficultyLevelData(BaseModel):
 class UpdateSolutionData(BaseModel):
     Type: str
 
+class FragmentTypeData(BaseModel):
+    Type: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -171,3 +174,13 @@ def update_solution(SID: str, updateSolutionData: UpdateSolutionData):
 def get_distractor(FID: str):
     from db.database import get_distractor_by_fid
     return get_distractor_by_fid(FID)
+
+@app.post('/api/fragment_type/update/{FID}')
+def update_fragment_type(FID: str, fragmentTypeData: FragmentTypeData):
+    from db.database import update_fragment_type
+    return update_fragment_type(FID, fragmentTypeData.Type)
+
+@app.get('/api/fragment_fid/{FID}')
+def get_fragment_id(FID: str):
+    from db.database import get_fragment
+    return get_fragment(FID)

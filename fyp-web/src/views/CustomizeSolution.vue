@@ -36,6 +36,7 @@ const difficultyLevelID = ref('')
 const FragmentSeq = ref('')
 const BlockSeq = ref('')
 const blockCover = reactive([])
+const context = reactive([])
 
 const getQuestion = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -66,6 +67,7 @@ const getSequence = async () => {
                 let temp = "Line " + j.toString() + ": " + res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0')
                 sequence.push(temp)
                 blockCover.push(false)
+                context.push(false)
             }
         console.log("sequence:" + sequence)
         }
@@ -185,13 +187,41 @@ const updateDifficultyLevel = async () => {
 //     })
 // }
 const confirm = async () => {
-    router.push(('/question/' + QID))
+    //For context type question
+    if (questionType == "context") {
+        for (let i = 0; i < codeLength.value; i++) {
+            if (context[i] === true) {
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment_type/update/" + FID[i]
+                axios.post(query, {
+                    Type: "context",
+                }).then((res) => {
+                })
+            }else{
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment_type/update/" + FID[i]
+                axios.post(query, {
+                    Type: "not context",
+                }).then((res) => {
+                })
+            }
+        }
+    }
+    router.push(('/question/' + QID + '/' + questionType))
+}
+
+// For context type question
+const setContext = (i: number) =>{
+    if (context[i] === true) {
+        context[i] = false
+    } else {
+       context[i] = true
+    }   
 }
 getQuestion()
 getBID()
 getSID()
 </script>
 <template>
+    <div>
   <!-- <div class="container mx-auto sm:px-4 mt-5 mb-5">
     <h2 class="text-center mb-6 font-medium text-gray-900">
           <div class="text-2xl">Customize Solution</div>
@@ -445,6 +475,99 @@ getSID()
           Confirm
         </button> 
   </div>
+  <div class="container mx-auto sm:px-4 mt-5 mb-5" v-if="questionType === 'context'">
+    <h2 class="text-center mb-6 font-medium text-gray-900">
+          <div class="text-2xl">Customize Solution</div>
+        </h2>
+    <div class="flex flex-wrap ">
+      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
+            <h6>Question: {{ QName }}</h6>
+            <p>{{ description }}</p>
+            <div class="mt-2 mb-2 inline-block">
+                <button
+                    class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    type="submit"
+                    @click="addDistractorBoxShow = true"
+                >
+                Add Distractor
+                </button>
+            </div>
+            <div><p>You can press the pin icons to set some context codes as tips for students</p></div>
+            <div v-if="addDistractorBoxShow">
+                <h6>Add Distractor</h6>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Compare with line:</label
+                    >
+                    <select
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorLine"
+                        required
+                    >
+                        <option v-for="i in codeLength" :value="i">{{ i }}</option>
+                    </select>
+                </div>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Distractor code (one line python code):</label
+                    >
+                    <input
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorCode"
+                        required
+                    >
+                </div>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >The reason to add this distractor (This reason will be shown as feedback when students choose this distractor): </label
+                    >
+                    <textarea
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorReason"
+                        required
+                    >
+                    </textarea>
+                </div>
+                <div class="mt-2 mb-2">
+                    <button
+                        class="ml-3 float-right group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        type="submit"
+                        @click="addDistractor"
+                    >
+                    Add Distractor
+                    </button>
+                </div>
+            </div>
+        </div>
+      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
+        <h6>Code</h6>
+            <div v-for="(fragment, i) in sequence" :key="i">
+                <div class="bg-white mt-3 p-2 shadow border rounded">
+                    <p>                        
+                        <button @click="setContext(i)" v-show="context[i] == false" title="Choose this line as context" type="button" class="text-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <img src="../images/push-pin-blue-icon.png" class="w-4 h-4"/>
+                            <span class="sr-only">Choose this line as context</span>
+                        </button>
+                        <button @click="setContext(i)" v-show="context[i] == true" title="Choose this line as context" type="button" class="text-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <img src="../images/push-pin-blue-icon-pinned.jpeg" class="w-4 h-4"/>
+                            <span class="sr-only">Choose this line as context</span>
+                        </button>
+                        {{ fragment }}
+                    </p>
+                </div>
+            </div>
+
+    </div>
+    </div>
+    <button
+            class="float-right mt-7 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
+            @click="confirm"
+        >
+          Confirm
+        </button> 
+  </div>
+</div>
 </template>
 
 <style scoped>

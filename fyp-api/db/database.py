@@ -666,6 +666,7 @@ def get_fragment(FID: str):
                     return playload
                 playload['status'] = 'success'
                 playload['fragment'] = result[0]
+                print(playload['fragment'])
                 return playload
     except:
         playload['status'] = 'error'
@@ -1158,7 +1159,7 @@ def get_sequence_prototype(BID: str):
     Returns:
         dict: status(success, error), fragments
     """
-    playload = {'status': '', 'sequence': [], 'FID': []}
+    playload = {'status': '', 'sequence': [], 'FID': [], 'FragmentType': []}
     try:
         connection = create_connection()
         with connection:
@@ -1174,10 +1175,11 @@ def get_sequence_prototype(BID: str):
                 FragmentSeq.pop()
                 for fragment in FragmentSeq:
                     playload['FID'].append(fragment)
-                    sql = "SELECT Code FROM `Fragment` WHERE `FID` =%s"
+                    sql = "SELECT * FROM `Fragment` WHERE `FID` =%s"
                     cursor.execute(sql, (fragment))
                     result = cursor.fetchone()
                     playload['sequence'].append(result['Code'])
+                    playload['FragmentType'].append(result['Type'])
                 playload['status'] = 'success'
                 return playload
     except:
@@ -1230,6 +1232,57 @@ def get_distractor_by_fid(FID: str):
                     return playload
                 playload['status'] = 'success'
                 playload['distractors'] = result
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def update_fragment_type(FID: str, Type: str):
+    """ Update fragment type
+
+    Args: 
+        FID (str): fragment id
+        Type (str): fragment type
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Fragment` SET `Type` = %s WHERE `FID` = %s"
+                cursor.execute(sql, (Type, FID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def get_fragment_type(FID: str):
+    """ Get fragment type
+
+    Args: 
+        FID (str): fragment id
+    
+    Returns:
+        dict: status(success, error), type
+    """
+    playload = {'status': '', 'type': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT Type FROM `Fragment` WHERE `FID` = %s"
+                cursor.execute(sql, (FID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                playload['status'] = 'success'
+                playload['type'] = result['Type']
                 return playload
     except:
         playload['status'] = 'error'
