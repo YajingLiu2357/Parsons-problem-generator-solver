@@ -121,7 +121,6 @@ const getSequence = async () => {
     })
 }
 const check = () =>{
-    alert(indent)
     checked.value = true
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){
@@ -159,6 +158,11 @@ const increaseIndent = (i: number) =>{
     indent[i] = indent[i] + 1
     
 }
+const removeBackgroundColor = () =>{
+    for (let i = 0; i < color.length; i++) {
+        color[i] = 'white'
+    }
+}
 getQuestionInformation()
 getFragments()
 </script>
@@ -183,8 +187,8 @@ getFragments()
         </div>
       <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
         <h6>Answer</h6>
-        <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" >
-            <div v-for="(fragment, i) in pool.answer" :key="i">
+        <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" @change="removeBackgroundColor()">
+            <div v-for="(fragment, i) in pool.answer" :key="i" >
                 <div v-bind:style="[checked == true? {backgroundColor: color[i]} : {backgroundColor: white}]" class="bg-white mt-3 p-2 shadow border rounded">                        
                     <p>
                         <button @click="decreaseIndent(i)" title="Decrease Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
