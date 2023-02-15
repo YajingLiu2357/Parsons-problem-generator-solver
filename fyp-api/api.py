@@ -166,3 +166,8 @@ def update_difficulty_level(DLID: str, updateDifficultyLevelData: UpdateDifficul
 def update_solution(SID: str, updateSolutionData: UpdateSolutionData):
     from db.database import update_solution_prototype
     return update_solution_prototype(SID, updateSolutionData.Type)
+
+@app.get('/api/distractor/{FID}')
+def get_distractor(FID: str):
+    from db.database import get_distractor_by_fid
+    return get_distractor_by_fid(FID)

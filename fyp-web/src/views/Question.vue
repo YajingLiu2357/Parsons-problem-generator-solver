@@ -27,6 +27,8 @@ const indent = reactive([])
 const indentAnswer = reactive([])
 const checked = ref(false)
 const color = reactive([])
+const distractorCode = reactive([])
+const distractorReason = reactive([])
 const white = 'white'
 
 const getQuestionInformation = async () => {
@@ -48,6 +50,16 @@ const getFragments = async () => {
                 pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))
                 indent.push(0)
                 color.push('white')
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
+                axios.get(query).then((res) => {
+                    if (res.data.status === 'success') {
+                        for (let j = 0; j < res.data.distractors.length; j++) {
+                            pool.code.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorCode.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorReason.push(res.data.distractors[j].Reason)
+                        }
+                    }
+                })
             }
             getSequence()
         }
@@ -88,6 +100,12 @@ const check = () =>{
         tempAnswer = tempAnswer.toString().trim()
         if (tempSeq !== tempAnswer) {
             color[i] = '#ff6251'
+            for(let j = 0; j < distractorCode.length; j++){
+                let tempDistractor = distractorCode[j].toString().trim()
+                if (tempDistractor === tempAnswer){
+                    alert("Reason: " + distractorReason[j])
+                }
+            }
         }else if (indent[i] !== indentAnswer[i]){
             color[i] = "#ffd877"
         }

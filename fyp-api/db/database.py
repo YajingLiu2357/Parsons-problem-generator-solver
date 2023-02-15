@@ -1208,6 +1208,33 @@ def update_solution_prototype(SID: str, Type: str):
         playload['status'] = 'error'
         return playload
 
+def get_distractor_by_fid(FID: str):
+    """ Get distractor by fragment id
+
+    Args: 
+        FID (str): fragment id
+    
+    Returns:
+        dict: status(success, error), distractors
+    """
+    playload = {'status': '', 'distractors': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Distractor` WHERE `FID` = %s"
+                cursor.execute(sql, (FID))
+                result = cursor.fetchall()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                playload['status'] = 'success'
+                playload['distractors'] = result
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

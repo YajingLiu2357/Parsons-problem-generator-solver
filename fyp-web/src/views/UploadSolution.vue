@@ -68,12 +68,12 @@ const uploadSolution = () => {
                                 axios.post(query, {
                                     SolutionSeq: solutionSeq,
                                 }).then((res) => {
-                                    if (jumpCustomize.value === false){
-                                        router.push('/customize_solution/' + QID)
-                                    } else {
-                                        router.push('/question/' + QID)
-                                    }
-                                    // router.push('/customize_solution/' + QID)
+                                    // if (jumpCustomize.value === false){
+                                    //     router.push('/customize_solution/' + QID)
+                                    // } else {
+                                    //     router.push('/question/' + QID)
+                                    // }
+                                    router.push('/customize_solution/' + QID + '/' + questionType)
                                 })
                             } else {
                                 alert(res.data.status)
@@ -120,11 +120,11 @@ const checkQuestionType = () =>{
     } else {
         singleSolution.value = false    
     }
-    if (questionType === 'traditional'){
-        jumpCustomize.value = true
-    } else {
-        jumpCustomize.value = false
-    }
+    // if (questionType === 'traditional'){
+    //     jumpCustomize.value = true
+    // } else {
+    //     jumpCustomize.value = false
+    // }
 }
 checkQuestionType()
 

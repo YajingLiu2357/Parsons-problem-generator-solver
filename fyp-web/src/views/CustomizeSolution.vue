@@ -13,11 +13,11 @@ const store = useStore()
 const QID = route.params.QID
 const QName = ref('')
 const description = ref('')
-const questionType = ref('')
+const questionType = route.params.Type
 description.value = ""
 const sequence = reactive([])
 const bid = ref('')
-const solutionType = ref('')
+// const solutionType = ref('')
 const FID = reactive([])
 const addDistractorBoxShow = ref(false)
 const codeLength = ref(0)
@@ -42,7 +42,6 @@ const getQuestion = async () => {
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
             QName.value = res.data.question.Qname
-            questionType.value = res.data.question.Type
             description.value = res.data.question.Description
         }
     })
@@ -174,23 +173,26 @@ const updateDifficultyLevel = async () => {
     })
 }
 
+// const confirm = async () => {
+//     const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/update/" + SID[0]
+//     axios.post(query, {
+//         Type: solutionType.value,
+//     }).then((res) => {
+//         if (res.data.status === 'success') {
+//             alert("Confirm Success")
+//             router.push(('/question/' + QID))
+//         }
+//     })
+// }
 const confirm = async () => {
-    const query = "http://" + config.apiServer + ":" + config.port + "/api/solution/update/" + SID[0]
-    axios.post(query, {
-        Type: solutionType.value,
-    }).then((res) => {
-        if (res.data.status === 'success') {
-            alert("Confirm Success")
-            router.push(('/question/' + QID))
-        }
-    })
+    router.push(('/question/' + QID))
 }
 getQuestion()
 getBID()
 getSID()
 </script>
 <template>
-  <div class="container mx-auto sm:px-4 mt-5 mb-5">
+  <!-- <div class="container mx-auto sm:px-4 mt-5 mb-5">
     <h2 class="text-center mb-6 font-medium text-gray-900">
           <div class="text-2xl">Customize Solution</div>
         </h2>
@@ -204,7 +206,6 @@ getSID()
               >
               <select
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  v-model="solutionType"
                   required
               >
                 <option value="fixed order">fixed order</option>
@@ -212,7 +213,7 @@ getSID()
                 <option value="insert key code">insert key code</option>
               </select>
             </div>
-            <div class="mt-2 mb-2">
+            <div class="mt-2 mb-2 inline-block">
                 <button
                     class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     type="submit"
@@ -232,7 +233,7 @@ getSID()
                 <h6>Add Distractor</h6>
                 <div class="mt-2 mb-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Line:</label
+                    >Compare with line:</label
                     >
                     <select
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -244,14 +245,13 @@ getSID()
                 </div>
                 <div class="mt-2 mb-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Distractor Code:</label
+                    >Distractor code (one line python code):</label
                     >
-                    <textarea
+                    <input
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         v-model="distractorCode"
                         required
                     >
-                    </textarea>
                 </div>
                 <div class="mt-2 mb-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -278,7 +278,7 @@ getSID()
                 <h6>Add Difficulty Level</h6>
                 <div>Level: {{ difficultyLevel-1 }}</div>
                 <button
-                    class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="inline-block mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     type="submit"
                     @click="addBlockBoxShow = true"
                 >
@@ -342,6 +342,87 @@ getSID()
                         @click="updateDifficultyLevel"
                     >
                     Finsh
+                    </button>
+                </div>
+            </div>
+        </div>
+      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
+        <h6>Code</h6>
+            <div v-for="(fragment, i) in sequence" :key="i">
+                <div class="bg-white mt-3 p-2 shadow border rounded">
+                    <p>{{ fragment }}</p>
+                </div>
+            </div>
+
+    </div>
+    </div>
+    <button
+            class="float-right mt-7 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
+            @click="confirm"
+        >
+          Confirm
+        </button> 
+  </div> -->
+  <div class="container mx-auto sm:px-4 mt-5 mb-5" v-if="questionType === 'traditional'">
+    <h2 class="text-center mb-6 font-medium text-gray-900">
+          <div class="text-2xl">Customize Solution</div>
+        </h2>
+    <div class="flex flex-wrap ">
+      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
+            <h6>Question: {{ QName }}</h6>
+            <p>{{ description }}</p>
+            <div class="mt-2 mb-2 inline-block">
+                <button
+                    class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    type="submit"
+                    @click="addDistractorBoxShow = true"
+                >
+                Add Distractor
+                </button>
+            </div>
+            <div v-if="addDistractorBoxShow">
+                <h6>Add Distractor</h6>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Compare with line:</label
+                    >
+                    <select
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorLine"
+                        required
+                    >
+                        <option v-for="i in codeLength" :value="i">{{ i }}</option>
+                    </select>
+                </div>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Distractor code (one line python code):</label
+                    >
+                    <input
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorCode"
+                        required
+                    >
+                </div>
+                <div class="mt-2 mb-2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >The reason to add this distractor (This reason will be shown as feedback when students choose this distractor): </label
+                    >
+                    <textarea
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        v-model="distractorReason"
+                        required
+                    >
+                    </textarea>
+                </div>
+                <div class="mt-2 mb-2">
+                    <button
+                        class="ml-3 float-right group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        type="submit"
+                        @click="addDistractor"
+                    >
+                    Add Distractor
                     </button>
                 </div>
             </div>
