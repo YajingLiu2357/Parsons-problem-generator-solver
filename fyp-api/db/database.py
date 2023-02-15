@@ -1288,6 +1288,40 @@ def get_fragment_type(FID: str):
         playload['status'] = 'error'
         return playload
 
+def get_block_multiple_steps(QID: str):
+    """ Get block multiple steps
+
+    Args: 
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error), steps
+    """
+    playload = {'status': '', 'blocks': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT BlockSeq FROM `DifficultyLevel` WHERE `Level` = '2' AND `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` = %s)"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                BlockSeq = result['BlockSeq']
+                BlockSeq = BlockSeq.split(';')
+                BlockSeq.pop()
+                for block in BlockSeq:
+                    sql = "SELECT * FROM `Block` WHERE `BID` = %s"
+                    cursor.execute(sql, (block))
+                    result = cursor.fetchone()
+                    playload['blocks'].append(result)
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
@@ -1336,4 +1370,5 @@ if __name__ == '__main__':
     #res = get_fragment("050c0534-d1cd-49bf-91df-7540e568e6c2")
     #get_sequence_prototype("d1048a84-d8dd-44de-8bd2-4f14aaea6aca")
     res = update_block("7a8fdfdf-ac47-48c1-b47e-cca885fd1ad2", "multiple fragments", "de9b5ee1-2e51-4a70-821b-aa543e4d6419;ef9b65c4-7fde-42ea-8ceb-f702265d7368;15ea43cb-2a2d-4140-8e44-900e38f7d2fd;0e85c211-685a-418f-8d10-8328304ea09a;9186012f-97a2-4178-b611-258148912105;21f56142-2611-4a4d-b3e7-d5d7adbb5580;548866bf-19de-48de-87cf-727109863115;", "001c02aa-f1d0-4b55-9218-f8147f50d671")
+    res = get_block_multiple_steps("0a0b0d88-24dd-4adb-90e8-bb09e6130dab")
     print(res)

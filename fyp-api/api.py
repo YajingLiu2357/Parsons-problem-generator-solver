@@ -184,3 +184,8 @@ def update_fragment_type(FID: str, fragmentTypeData: FragmentTypeData):
 def get_fragment_id(FID: str):
     from db.database import get_fragment
     return get_fragment(FID)
+
+@app.get('/api/block/{QID}')
+def get_block(QID: str):
+    from db.database import get_block_multiple_steps
+    return get_block_multiple_steps(QID)
