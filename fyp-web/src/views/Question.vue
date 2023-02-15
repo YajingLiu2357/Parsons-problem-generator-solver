@@ -84,7 +84,27 @@ const getFragments = async () => {
                     }
                 })
                 }
-            }else {
+            }else if (questionType === 'insert-key-code'){
+                for (let i = 0; i < res.data.fragments.length; i++) {
+                bid.value = res.data.fragments[i].BID
+                // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                if (res.data.fragments[i].Type === 'key code'){
+                    pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
+                }
+                indent.push(0)
+                color.push('white')
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
+                axios.get(query).then((res) => {
+                    if (res.data.status === 'success') {
+                        for (let j = 0; j < res.data.distractors.length; j++) {
+                            pool.code.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorCode.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorReason.push(res.data.distractors[j].Reason)
+                        }
+                    }
+                })
+                }
+            }else{
 
             }
             getSequence()
@@ -115,7 +135,12 @@ const getSequence = async () => {
                     }else{
                         pool.answer.push('Placeholder. Drag it to the left code pool before checking.')
                     }
-                }  
+                }else if (questionType === 'insert-key-code'){
+                    if (res.data.FragmentType[i] === 'not key code'){
+                        pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                        indent[i] = temp
+                    }
+                } 
             }    
         }
     })
@@ -130,8 +155,10 @@ const check = () =>{
         }
         let tempSeq = sequence[i]
         let tempAnswer = pool.answer[i]
-        tempSeq = tempSeq.toString().trim()
-        tempAnswer = tempAnswer.toString().trim()
+        tempSeq = tempSeq.replace(/\u00a0/g, ' ')
+        tempAnswer = tempAnswer.replace(/\u00a0/g, ' ')
+        // tempSeq = tempSeq.toString().trim()
+        // tempAnswer = tempAnswer.toString().trim()
         if (tempSeq !== tempAnswer) {
             color[i] = '#ff6251'
             for(let j = 0; j < distractorCode.length; j++){

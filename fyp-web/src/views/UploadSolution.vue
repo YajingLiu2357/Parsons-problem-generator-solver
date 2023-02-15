@@ -115,7 +115,7 @@ const uploadSolution = () => {
 // }
 // getQuestionType()
 const checkQuestionType = () =>{
-    if (questionType === 'traditional' || questionType === 'context' || questionType === 'insert key code' || questionType === 'check only inside block' || questionType === 'multiple steps' || questionType === 'link together' || questionType === 'algorithm analysis'){
+    if (questionType === 'traditional' || questionType === 'context' || questionType === 'insert-key-code' || questionType === 'check-only-inside-block' || questionType === 'multiple-steps' || questionType === 'link-together' || questionType === 'algorithm-analysis'){
         singleSolution.value = true
     } else {
         singleSolution.value = false    
