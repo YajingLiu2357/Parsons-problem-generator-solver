@@ -189,3 +189,8 @@ def get_fragment_id(FID: str):
 def get_block(QID: str):
     from db.database import get_block_multiple_steps
     return get_block_multiple_steps(QID)
+
+@app.get('/api/solution_name/{BID}')
+def get_solution_name(BID: str):
+    from db.database import get_solution_name
+    return get_solution_name(BID)

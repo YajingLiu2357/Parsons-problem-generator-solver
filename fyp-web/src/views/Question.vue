@@ -14,6 +14,7 @@ const store = useStore()
 let pool = {
     code: reactive([]),
     answer: reactive([]),
+    buffer: reactive([]),
 }
 
 const QID = route.params.QID
@@ -32,6 +33,16 @@ const distractorReason = reactive([])
 const white = 'white'
 const questionType = route.params.Type
 const blocks = reactive([])
+// For multiple solutions
+const bid2 = ref('')
+const sequence2 = reactive([])
+const indent2 = reactive([])
+const indentAnswer2 = reactive([])
+const color2 = reactive([])
+const solutionName = ref('')
+const solutionName2 = ref('')
+const distractorCode2 = reactive([])
+const distractorReason2 = reactive([])
 
 
 const getQuestionInformation = async () => {
@@ -72,8 +83,8 @@ const getFragments = async () => {
                 if (res.data.fragments[i].Type === 'not context'){
                     pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
                 }
-                indent.push(0)
-                color.push('white')
+                // indent.push(0)
+                // color.push('white')
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
                 axios.get(query).then((res) => {
                     if (res.data.status === 'success') {
@@ -92,8 +103,8 @@ const getFragments = async () => {
                 if (res.data.fragments[i].Type === 'key code'){
                     pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
                 }
-                indent.push(0)
-                color.push('white')
+                // indent.push(0)
+                // color.push('white')
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
                 axios.get(query).then((res) => {
                     if (res.data.status === 'success') {
@@ -123,8 +134,8 @@ const getFragments = async () => {
                 }
                 temp = temp + res.data.fragments[i].Code.replace(/\n/g, '')
                 pool.code.push(temp)
-                indent.push(0)
-                color.push('white')
+                // indent.push(0)
+                // color.push('white')
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
                 axios.get(query).then((res) => {
                     if (res.data.status === 'success') {
@@ -136,9 +147,50 @@ const getFragments = async () => {
                     }
                 })
             }
-            getSequence()
-        }
+        }else if (questionType === 'compare-algorithm'){
+            for (let i = 0; i < res.data.fragments.length; i++) {
+                bid.value = res.data.fragments[0].BID
+                getSolutionName()
+                if(res.data.fragments[i].BID != bid.value){
+                   bid2.value = res.data.fragments[i].BID
+                     getSolutionName2()
+               }
+                // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))
+                // indent.push(0)
+                // color.push('white')
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
+                axios.get(query).then((res) => {
+                    if (res.data.status === 'success') {
+                        for (let j = 0; j < res.data.distractors.length; j++) {
+                            pool.code.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorCode.push(res.data.distractors[j].Code.replace(/\n/g, ''))
+                            distractorReason.push(res.data.distractors[j].Reason)
+                        }
+                    }
+                })
+            }
+            getSequence2()
+         }
+        getSequence()
     }})
+}
+const getSolutionName = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/solution_name/" + bid.value
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            solutionName.value = res.data.Sname
+            console.log(solutionName.value)
+        }
+    })
+}
+const getSolutionName2 = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/solution_name/" + bid2.value
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            solutionName2.value = res.data.Sname
+        }
+    })
 }
 const getSequence = async () => {
     const query = "http://" + config.apiServer + ":" + config.port + "/api/sequence/" + bid.value
@@ -156,6 +208,8 @@ const getSequence = async () => {
                         break
                     }
                 }
+                indent.push(0)
+                color.push('white')
                 indentAnswer.push(temp)
                 if(questionType=== 'context'){
                     if (res.data.FragmentType[i] === 'context'){
@@ -174,6 +228,29 @@ const getSequence = async () => {
         }
     })
 }
+const getSequence2 = async () =>{
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/sequence/" + bid2.value
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            for (let i = 0; i < res.data.sequence.length; i++) {
+                sequence2.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                // sequence.push(res.data.sequence[i].replace(/\n/g, ''))
+                let temp = 0
+                for (let j = 0; j < res.data.sequence[i].length; j=j+4){
+                    if (res.data.sequence[i][j] === ' ' && res.data.sequence[i][j+1] === ' ' && res.data.sequence[i][j+2] === ' ' && res.data.sequence[i][j+3] === ' '){
+                        temp = temp + 1
+                    }
+                    else{
+                        break
+                    }
+                }
+                indent2.push(0)
+                color2.push('white')
+                indentAnswer2.push(temp)
+            }    
+        }
+    })
+}
 const check = () =>{
     checked.value = true
     for (let i = 0; i < sequence.length; i++) {
@@ -185,7 +262,9 @@ const check = () =>{
         let tempSeq = sequence[i]
         let tempAnswer = pool.answer[i]
         tempSeq = tempSeq.replace(/\u00a0/g, ' ')
-        tempAnswer = tempAnswer.slice(8, tempAnswer.length)
+        if(questionType === 'multiple-steps'){
+            tempAnswer = tempAnswer.slice(8, tempAnswer.length)
+        }
         tempAnswer = tempAnswer.replace(/\u00a0/g, ' ')
         tempSeq = tempSeq.toString().trim()
         tempAnswer = tempAnswer.toString().trim()
@@ -202,6 +281,35 @@ const check = () =>{
         }
         else{
             color[i] = "#b1dd8c"
+        }
+    }
+    if (questionType === "compare-algorithm"){
+        for (let i = 0; i < sequence2.length; i++) {
+            if (pool.buffer.length <= i){
+                let difference = sequence2.length - pool.buffer.length
+                alert("Need to add " + difference + " more lines in the middle code pool")
+                return
+            }
+            let tempSeq = sequence2[i]
+            let tempAnswer = pool.buffer[i]
+            tempSeq = tempSeq.replace(/\u00a0/g, ' ')
+            tempAnswer = tempAnswer.replace(/\u00a0/g, ' ')
+            tempSeq = tempSeq.toString().trim()
+            tempAnswer = tempAnswer.toString().trim()
+            if (tempSeq !== tempAnswer) {
+                color2[i] = '#ff6251'
+                for(let j = 0; j < distractorCode2.length; j++){
+                    let tempDistractor = distractorCode2[j].toString().trim()
+                    if (tempDistractor === tempAnswer){
+                        alert("Reason: " + distractorReason2[j])
+                    }
+                }
+            }else if (indent2[i] !== indentAnswer2[i]){
+                color2[i] = "#ffd877"
+            }
+            else{
+                color2[i] = "#b1dd8c"
+            }
         }
     }
 }
@@ -231,6 +339,19 @@ const removeBackgroundColor = () =>{
     for (let i = 0; i < color.length; i++) {
         color[i] = 'white'
     }
+}
+const removeBackgroundColor2 = () =>{
+    for (let i = 0; i < color2.length; i++) {
+        color2[i] = 'white'
+    }
+}
+const decreaseIndent2 = (i: number) =>{
+    pool.buffer[i] = pool.buffer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
+    indent2[i] = indent2[i] - 1
+}
+const increaseIndent2 = (i: number) =>{
+    pool.buffer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.buffer[i]
+    indent2[i] = indent2[i] + 1
 }
 // For multiple steps
 const getBlocks= async () =>{
@@ -270,8 +391,28 @@ getBlocks()
                 <span class="text-green-500">Green: &nbsp;&nbsp;Correct</span>
             </p>
         </div>
+        <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded" v-show="questionType === 'compare-algorithm'">
+        <h6>{{ solutionName2 }}</h6>
+        <VueDraggableNext class = "draggable-list" :list="pool.buffer" group = "pool" @change="removeBackgroundColor2()">
+            <div v-for="(fragment, i) in pool.buffer" :key="i" >
+                <div v-bind:style="[checked == true? {backgroundColor: color2[i]} : {backgroundColor: white}]" class="bg-white mt-3 p-2 shadow border rounded">                        
+                    <p>
+                        <button @click="decreaseIndent2(i)" title="Decrease Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <svg class="w-4 h-4 rotate-180" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="sr-only">Decrease Indent</span>
+                        </button>
+                        <button @click="increaseIndent2(i)" title="Increase Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                            <svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <span class="sr-only">Increase Indent</span>
+                        </button>
+                        {{ fragment }}
+                    </p>
+                </div>
+            </div>
+        </VueDraggableNext>
+    </div>
       <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
-        <h6>Answer</h6>
+        <h6>{{ solutionName }}</h6>
         <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" @change="removeBackgroundColor()">
             <div v-for="(fragment, i) in pool.answer" :key="i" >
                 <div v-bind:style="[checked == true? {backgroundColor: color[i]} : {backgroundColor: white}]" class="bg-white mt-3 p-2 shadow border rounded">                        

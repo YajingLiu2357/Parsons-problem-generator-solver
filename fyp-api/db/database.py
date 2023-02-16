@@ -1134,6 +1134,27 @@ def get_fragment_prototype(QID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
+                # sql = "SELECT SolutionSeq FROM `Question` WHERE `QID` = %s"
+                # cursor.execute(sql, (QID))
+                # result = cursor.fetchone()
+                # if (result == None):
+                #     playload['status'] = 'error'
+                #     return playload
+                # solutionSeq = result['SolutionSeq']
+                # solutionSeq = solutionSeq.split(';')
+                # solutionSeq.pop()
+                # if (solutionSeq.length == 1):
+                #     sql = "SELECT * FROM `Fragment` WHERE `BID` IN (SELECT `BID` FROM `Block` WHERE `DLID` IN (SELECT `DLID` FROM `DifficultyLevel` WHERE `Level` = '1' AND `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` =%s)))"
+                #     cursor.execute(sql, (QID))
+                #     result = cursor.fetchall()
+                #     if (len(result) == 0):
+                #         playload['status'] = 'error'
+                #         return playload
+                #     playload['status'] = 'success'
+                #     playload['fragments'] = result
+                #     return playload
+                # else:
+                    
                 # For single solution
                 sql = "SELECT * FROM `Fragment` WHERE `BID` IN (SELECT `BID` FROM `Block` WHERE `DLID` IN (SELECT `DLID` FROM `DifficultyLevel` WHERE `Level` = '1' AND `SID` IN (SELECT `SID` FROM `Solution` WHERE `QID` =%s)))"
                 cursor.execute(sql, (QID))
@@ -1322,6 +1343,33 @@ def get_block_multiple_steps(QID: str):
         playload['status'] = 'error'
         return playload
 
+def get_solution_name(BID: str):
+    """ Get solution name
+
+    Args: 
+        BID (str): block id
+    
+    Returns:
+        dict: status(success, error), name
+    """
+    playload = {'status': '', 'Sname': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT Sname FROM `Solution` WHERE `SID` IN (SELECT SID FROM `DifficultyLevel` WHERE `DLID` IN (SELECT `DLID` FROM `Block` WHERE `BID` = %s))"
+                cursor.execute(sql, (BID))
+                result = cursor.fetchone()
+                print(result)
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                playload['status'] = 'success'
+                playload['Sname'] = result['Sname'].replace('.py', '')
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
@@ -1371,4 +1419,5 @@ if __name__ == '__main__':
     #get_sequence_prototype("d1048a84-d8dd-44de-8bd2-4f14aaea6aca")
     res = update_block("7a8fdfdf-ac47-48c1-b47e-cca885fd1ad2", "multiple fragments", "de9b5ee1-2e51-4a70-821b-aa543e4d6419;ef9b65c4-7fde-42ea-8ceb-f702265d7368;15ea43cb-2a2d-4140-8e44-900e38f7d2fd;0e85c211-685a-418f-8d10-8328304ea09a;9186012f-97a2-4178-b611-258148912105;21f56142-2611-4a4d-b3e7-d5d7adbb5580;548866bf-19de-48de-87cf-727109863115;", "001c02aa-f1d0-4b55-9218-f8147f50d671")
     res = get_block_multiple_steps("0a0b0d88-24dd-4adb-90e8-bb09e6130dab")
+    res = get_solution_name("60b991d7-3603-40fe-bef1-94a55671cd39")
     print(res)
