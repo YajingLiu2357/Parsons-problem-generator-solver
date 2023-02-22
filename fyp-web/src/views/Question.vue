@@ -47,7 +47,8 @@ const distractorCode2 = reactive([])
 const distractorReason2 = reactive([])
 const isPlaceholder = reactive([])
 // const numberIconList = ['\u{278A}', '\u{278B}', '\u{278C}', '\u{278D}', '\u{278E}', '\u{278F}', '\u{2790}', '\u{2791}', '\u{2792}', '\u{2793}']
-
+const scoreShow = ref('')
+const scoreShow2 = ref('')
 
 const getQuestionInformation = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -270,6 +271,7 @@ const getSequence2 = async () =>{
 }
 const check = () =>{
     checked.value = true
+    let score = 0
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){
             let difference = sequence.length - pool.answer.length
@@ -282,11 +284,15 @@ const check = () =>{
         if(questionType === 'multiple-steps'){
             tempAnswer = tempAnswer.slice(8, tempAnswer.length)
         }
+        if (questionType === 'context'){
+            tempAnswer = tempAnswer.slice(2, tempAnswer.length)
+        }
         tempAnswer = tempAnswer.replace(/\u00a0/g, ' ')
         tempSeq = tempSeq.toString().trim()
         tempAnswer = tempAnswer.toString().trim()
         if (tempSeq !== tempAnswer) {
             color[i] = '#ff6251'
+            score = score + 0
             for(let j = 0; j < distractorCode.length; j++){
                 let tempDistractor = distractorCode[j].toString().trim()
                 if (tempDistractor === tempAnswer){
@@ -295,12 +301,17 @@ const check = () =>{
             }
         }else if (indent[i] !== indentAnswer[i]){
             color[i] = "#ffd877"
+            score = score + 0.5
         }
         else{
             color[i] = "#b1dd8c"
+            score = score + 1
         }
     }
+    scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
+    alert("The answer on the right is scored as " + scoreShow.value + ".")
     if (questionType === "compare-algorithm"){
+        let score2 = 0
         for (let i = 0; i < sequence2.length; i++) {
             if (pool.buffer.length <= i){
                 let difference = sequence2.length - pool.buffer.length
@@ -315,6 +326,7 @@ const check = () =>{
             tempAnswer = tempAnswer.toString().trim()
             if (tempSeq !== tempAnswer) {
                 color2[i] = '#ff6251'
+                score2 = score2 + 0
                 for(let j = 0; j < distractorCode2.length; j++){
                     let tempDistractor = distractorCode2[j].toString().trim()
                     if (tempDistractor === tempAnswer){
@@ -323,11 +335,15 @@ const check = () =>{
                 }
             }else if (indent2[i] !== indentAnswer2[i]){
                 color2[i] = "#ffd877"
+                score2 = score2 + 0.5
             }
             else{
                 color2[i] = "#b1dd8c"
+                score2 = score2 + 1
             }
         }
+        scoreShow2.value = (score2 / sequence2.length * 100).toFixed(0) + "%"
+        alert("The answer on the middle is scored as " + scoreShow2.value + ".")
     }
 }
 const decreaseIndent = (i: number) =>{
