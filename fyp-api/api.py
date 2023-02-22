@@ -91,6 +91,13 @@ class UpdateSolutionData(BaseModel):
 class FragmentTypeData(BaseModel):
     Type: str
 
+class UserData(BaseModel):
+    Email: str
+    Password: str
+    Uname: str
+    UType: str
+    CID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -129,6 +136,11 @@ async def upload_solution(files: List[UploadFile] = File(...)):
 def create_solution(solutionData: SolutionData):
     from db.database import create_solution
     return create_solution(solutionData.Sname, solutionData.Type, solutionData.QID)
+
+@app.get('/api/question/getAll')
+def get_all_question():
+    from db.database import get_all_question
+    return get_all_question()
 
 @app.get('/api/question/{QID}')
 def get_question(QID: str):
@@ -204,3 +216,13 @@ def create_easier_version(QID: str):
 def check_easier_version(QID: str):
     from db.database import check_easier_version
     return check_easier_version(QID)
+
+@app.get('/api/class/getAll')
+def get_all_class():
+    from db.database import get_all_class
+    return get_all_class()
+
+@app.post('/api/user/create')
+def create_user(userData: UserData):
+    from db.database import create_user
+    return create_user(userData.Uname, userData.Password, userData.Email, userData.UType, userData.CID)

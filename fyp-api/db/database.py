@@ -1439,6 +1439,63 @@ def check_easier_version(QID: str):
     except:
         playload['status'] = 'error'
         return playload
+
+def get_all_question():
+    """ Get all question
+
+    Returns:
+        dict: status(success, error), questions
+    """
+    playload = {'status': '', 'questions': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Question`"
+                cursor.execute(sql)
+                questions = cursor.fetchall()
+                if (len(questions) == 0):
+                    playload['status'] = 'no question'
+                    return playload
+                for question in questions:
+                    QID = question['QID']
+                    sql = "SELECT * FROM `EasierVersionPointer` WHERE `EasierVersionQID` = %s"
+                    cursor.execute(sql, (QID))
+                    result = cursor.fetchone()
+                    if (result == None):
+                        playload['questions'].append(question)
+                    else:
+                        continue
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def get_all_class():
+    """ Get all class
+
+    Returns:
+        dict: status(success, error), classes
+    """
+    playload = {'status': '', 'classes': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Class`"
+                cursor.execute(sql)
+                classes = cursor.fetchall()
+                if (len(classes) == 0):
+                    playload['status'] = 'no class'
+                    return playload
+                playload['classes'] = classes
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
@@ -1490,4 +1547,5 @@ if __name__ == '__main__':
     res = get_block_multiple_steps("0a0b0d88-24dd-4adb-90e8-bb09e6130dab")
     res = get_solution_name("60b991d7-3603-40fe-bef1-94a55671cd39")
     res = create_easier_version_pointer("96c6e225-faf8-4a51-894e-4df950b1986f")
+    res = get_all_question()
     print(res)

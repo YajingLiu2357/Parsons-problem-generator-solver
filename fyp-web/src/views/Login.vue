@@ -4,16 +4,16 @@ import {ref} from "vue";
 import config from "../config"
 import { useRoute, useRouter } from 'vue-router'
 import { useStore} from 'vuex'
+import {computed, reactive} from "vue"
 
 const router = useRouter()
 const store = useStore()
 const route = useRoute()
-    // const count = ref(0)
 const email = ref("")
 const password = ref("")
 
-const login = () => {
 
+const login = () => {
   const query1 = "http://" + config.apiServer + ":" + config.port + "/api/login_check/"
   axios
       .post(query1,
@@ -22,19 +22,20 @@ const login = () => {
             password: password.value
           }).then((res) => {
     if (res.data.status === 'success') {
-      console.log(email.value + " login successfully")
+      console.log(res.data.user)
       store.commit('chgUser', {
-        UID: res.data.uuid,
+        UID: res.data.user.UID,
         userEmail: email.value,
-        userName: res.data.Uname,
+        userName: res.data.user.Uname,
       })
-      if (res.data.Utype === 'admin') {
-        store.commit('chgStatus', 'admin')
-      } else if (res.data.Utype === 'teacher'){
-        store.commit('chgStatus', 'teacher')
+      if (res.data.user.Utype === 'admin') {
+        store.commit('chgStatus', {userStatus: 'admin'})
+      } else if (res.data.user.UType === 'teacher'){
+        store.commit('chgStatus', {userStatus: 'teacher'})
       } else {
-        store.commit('chgStatus', 'student')
+        store.commit('chgStatus', {userStatus: 'student'})
       }
+      router.push('/')
     } else {
       alert(res.data.status)
     }
@@ -45,26 +46,12 @@ const login = () => {
 </script>
 
 <template>
-  <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-full flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
       <div>
-        <img
-            alt="Workflow"
-            class="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-        />
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Login to your account
+        <h2 class="text-center text-3xl font-extrabold text-gray-900">
+          Login Your Account
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Or
-          <router-link
-              class="font-medium text-indigo-600 hover:text-indigo-500"
-              to="/signup"
-          >
-            Sign up here.
-          </router-link>
-        </p>
       </div>
       <input name="remember" type="hidden" value="true"/>
       <div class="rounded-md shadow-sm -space-y-px">
@@ -97,29 +84,19 @@ const login = () => {
       </div>
 
       <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <input
-              id="remember-me"
-              checked
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              name="remember-me"
-              type="checkbox"
-          />
-          <label class="ml-2 block text-sm text-gray-900" for="remember-me">
-            Remember me
-          </label>
-        </div>
-
-        <div class="text-sm">
-          <a class="font-medium text-indigo-600 hover:text-indigo-500" href="#">
-            Forgot your password?
-          </a>
-        </div>
+        <p class="text-center text-sm text-gray-600">
+          <router-link
+              class="font-medium text-indigo-600 hover:text-indigo-500"
+              to="/register"
+            >
+            Not have an account?
+          </router-link>
+        </p>
       </div>
 
       <div>
         <button
-            class="group relative w-full flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            class="group relative w-full flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-blue-300  dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             type="submit"
             @click="login"
         >
