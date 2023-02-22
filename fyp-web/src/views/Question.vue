@@ -247,7 +247,8 @@ const getSequence2 = async () =>{
                 indent2.push(0)
                 color2.push('white')
                 indentAnswer2.push(temp)
-            }    
+            }
+            console.log(sequence2)    
         }
     })
 }
@@ -256,8 +257,8 @@ const check = () =>{
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){
             let difference = sequence.length - pool.answer.length
-            alert("Need to add " + difference + " more lines")
-            return
+            alert("Need to add " + difference + " more lines in the right code pool.")
+            break
         }
         let tempSeq = sequence[i]
         let tempAnswer = pool.answer[i]
@@ -288,7 +289,7 @@ const check = () =>{
             if (pool.buffer.length <= i){
                 let difference = sequence2.length - pool.buffer.length
                 alert("Need to add " + difference + " more lines in the middle code pool")
-                return
+                break
             }
             let tempSeq = sequence2[i]
             let tempAnswer = pool.buffer[i]
