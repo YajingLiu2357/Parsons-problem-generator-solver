@@ -833,6 +833,14 @@ getSID()
             @click="confirm"
         >
           Confirm
+        </button>
+        <button
+            class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
+            @click="createEasierVersion"
+        >
+          Confirm and create easier version
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button> 
   </div>
   <div class="container mx-auto sm:px-4 mt-5 mb-5" v-if="questionType === 'insert-key-code'">
@@ -918,6 +926,14 @@ getSID()
             @click="confirm"
         >
           Confirm
+        </button>
+        <button
+            class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
+            @click="createEasierVersion"
+        >
+          Confirm and create easier version
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button> 
   </div>
   <div class="container mx-auto sm:px-4 mt-5 mb-5" v-if="questionType === 'multiple-steps'">
