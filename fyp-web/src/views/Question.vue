@@ -46,6 +46,7 @@ const solutionName2 = ref('')
 const distractorCode2 = reactive([])
 const distractorReason2 = reactive([])
 const isPlaceholder = reactive([])
+// const numberIconList = ['\u{278A}', '\u{278B}', '\u{278C}', '\u{278D}', '\u{278E}', '\u{278F}', '\u{2790}', '\u{2791}', '\u{2792}', '\u{2793}']
 
 
 const getQuestionInformation = async () => {
@@ -126,20 +127,24 @@ const getFragments = async () => {
                 for (let i = 0; i < res.data.fragments.length; i++) {
                 bid.value = res.data.fragments[i].BID
                 // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
-                let temp = "Step"
+                let temp = "\u{3010}Step"
+                // let icon = ""
                 let fragmentInBlock = []
                 for (let j = 0; j < blocks.length; j++){
                     fragmentInBlock=blocks[j].split(";")
                     fragmentInBlock.pop()
                     for (let k = 0; k < fragmentInBlock.length; k++){
                         if (fragmentInBlock[k] === res.data.fragments[i].FID){
-                            temp = temp + " " + (j+1) + ": "
+                            temp = temp + " " + (j+1) + "\u{3011} "
+                            // icon = numberIconList[j]
                         }
                     }
                     fragmentInBlock = []
                 }
                 temp = temp + res.data.fragments[i].Code.replace(/\n/g, '')
                 pool.code.push(temp)
+                // icon = icon + res.data.fragments[i].Code.replace(/\n/g, '')
+                // pool.code.push(icon)
                 // indent.push(0)
                 // color.push('white')
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/distractor/" + res.data.fragments[i].FID
@@ -327,9 +332,9 @@ const check = () =>{
 }
 const decreaseIndent = (i: number) =>{
     if (questionType === 'multiple-steps'){
-        let tempList = pool.answer[i].split(':')
+        let tempList = pool.answer[i].split('\u{3011}')
         tempList[1] = tempList[1].replace('\u00a0\u00a0\u00a0\u00a0', '')
-        pool.answer[i] = tempList[0] + ':' + tempList[1]
+        pool.answer[i] = tempList[0] + '\u{3011}' + tempList[1]
         indent[i] = indent[i] - 1
     }else{
         pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
@@ -338,9 +343,9 @@ const decreaseIndent = (i: number) =>{
 }
 const increaseIndent = (i: number) =>{
     if (questionType === 'multiple-steps'){
-        let tempList = pool.answer[i].split(':')
+        let tempList = pool.answer[i].split('\u{3011}')
         tempList[1] = '\u00a0\u00a0\u00a0\u00a0' + tempList[1]
-        pool.answer[i] = tempList[0] + ':' + tempList[1]
+        pool.answer[i] = tempList[0] + '\u{3011}' + tempList[1]
         indent[i] = indent[i] + 1
     }else{
         pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
