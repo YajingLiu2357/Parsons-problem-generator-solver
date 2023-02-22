@@ -93,7 +93,6 @@ const getSequence = async () => {
                 context.push(false)
                 key.push(false)
             }
-        console.log("sequence:" + sequence)
         }
     })
 }
@@ -112,7 +111,6 @@ const getSequence2 = async () => {
                 context2.push(false)
                 key2.push(false)
             }
-        console.log("sequence:" + sequence2)
         }
     })
 }
@@ -256,34 +254,49 @@ const confirm = async () => {
                 axios.post(query, {
                     Type: "context",
                 }).then((res) => {
+                    if (i == codeLength.value - 1){
+                        router.push(('/question/' + QID + '/' + questionType))
+                    }
                 })
             }else{
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment_type/update/" + FID[i]
                 axios.post(query, {
                     Type: "not context",
                 }).then((res) => {
+                    if (i == codeLength.value - 1){
+                        router.push(('/question/' + QID + '/' + questionType))
+                    }
                 })
             }
         }
     }
-    if (questionType == "insert-key-code") {
+    //For insert-key-code type question
+    else if (questionType == "insert-key-code") {
         for (let i = 0; i < codeLength.value; i++) {
             if (key[i] === true) {
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment_type/update/" + FID[i]
                 axios.post(query, {
                     Type: "key code",
                 }).then((res) => {
+                    if (i == codeLength.value - 1){
+                        router.push(('/question/' + QID + '/' + questionType))
+                    }
                 })
             }else{
                 const query = "http://" + config.apiServer + ":" + config.port + "/api/fragment_type/update/" + FID[i]
                 axios.post(query, {
                     Type: "not key code",
                 }).then((res) => {
+                    if (i == codeLength.value - 1){
+                        router.push(('/question/' + QID + '/' + questionType))
+                    }
                 })
             }
         }
     }
-    router.push(('/question/' + QID + '/' + questionType))
+    else{
+        router.push(('/question/' + QID + '/' + questionType))
+    }
 }
 
 // For context type question
