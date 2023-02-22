@@ -666,7 +666,6 @@ def get_fragment(FID: str):
                     return playload
                 playload['status'] = 'success'
                 playload['fragment'] = result[0]
-                print(playload['fragment'])
                 return playload
     except:
         playload['status'] = 'error'
@@ -1058,7 +1057,6 @@ def upload_solution(files):
     try:
         for file in files:
             path = os.path.join(fpath, 'solution/' + file.filename)
-            print(path)
             with open(path, 'wb') as f:
                 f.write(file.file.read())
         playload['status'] = 'success'
@@ -1084,7 +1082,6 @@ def cut_solution(fname: str, DLID: str):
             for line in lines:
                 if not line.isspace():
                     playload['fragments'].append(line.decode('utf-8'))
-        print("enter cut_solution")
         create_fragment_prototype(playload['fragments'], DLID)
         playload['status'] = 'success'
         return playload
@@ -1104,15 +1101,12 @@ def create_fragment_prototype(fragments: list, DLID: str):
     """
     playload = {'status': ''}
     try:
-        print("enter create_fragment_prototype")
         fragmentSeq = ""
         block = create_block('multiple fragments (standard)', fragmentSeq, DLID)
         for fragment in fragments:
             playload = create_fragment(fragment, '', block['uuid'])
             fragmentSeq += playload['uuid'] + ';'
-        print(fragmentSeq)
         playload=update_block(block['uuid'], 'multiple fragments', fragmentSeq, DLID)
-        print(playload)
         level = get_difficulty_level(DLID)
         update_difficulty_level(DLID, level['difficulty_level'].Level, block['uuid'], level['difficulty_level'].SID)
         playload['status'] = 'success'
@@ -1360,13 +1354,88 @@ def get_solution_name(BID: str):
                 sql = "SELECT Sname FROM `Solution` WHERE `SID` IN (SELECT SID FROM `DifficultyLevel` WHERE `DLID` IN (SELECT `DLID` FROM `Block` WHERE `BID` = %s))"
                 cursor.execute(sql, (BID))
                 result = cursor.fetchone()
-                print(result)
                 if (len(result) == 0):
                     playload['status'] = 'error'
                     return playload
                 playload['status'] = 'success'
                 playload['Sname'] = result['Sname'].replace('.py', '')
                 return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def create_easier_version_pointer (QID: str):
+    """
+    Create easier version pointer
+    
+    Args:
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error), easier version QID
+    """
+    playload = {'status': '', 'EasierVersionQID': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Question` WHERE `QID` = %s"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'error'
+                    return playload
+                else:
+                    Qname = result['Qname']
+                    Scope = result['Scope']
+                    Description = result['Description']
+                    Type = ''
+                    SolutionSeq = result['SolutionSeq']
+                    question = create_question_prototype(Qname, Scope, Description, Type)
+                    playload['EasierVersionQID'] = question['uuid']
+                    SolutionSeq = SolutionSeq.split(';')
+                    SolutionSeq.pop()
+                    for solution in SolutionSeq:
+                        sql = "SELECT * FROM `Solution` WHERE `SID` = %s"
+                        cursor.execute(sql, (solution))
+                        result = cursor.fetchone()
+                        Sname = result['Sname']
+                        Type = result['Type']
+                        create_solution(Sname, Type, playload['EasierVersionQID'])
+                    sql = "INSERT INTO `EasierVersionPointer` (`OriginalQID`, `EasierVersionQID`) VALUES (%s, %s)"
+                    cursor.execute(sql, (QID, playload['EasierVersionQID']))
+                    connection.commit()
+                    playload['status'] = 'success'
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def check_easier_version(QID: str):
+    """
+    Check if it is easier version
+    
+    Args:
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error), easier version QID
+    """
+    playload = {'status': '', 'isEasierVersion': False}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `EasierVersionPointer` WHERE `EasierVersionQID` = %s"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'success'
+                    return playload
+                else:
+                    playload['status'] = 'success'
+                    playload['isEasierVersion'] = True
+                    return playload
     except:
         playload['status'] = 'error'
         return playload
@@ -1420,4 +1489,5 @@ if __name__ == '__main__':
     res = update_block("7a8fdfdf-ac47-48c1-b47e-cca885fd1ad2", "multiple fragments", "de9b5ee1-2e51-4a70-821b-aa543e4d6419;ef9b65c4-7fde-42ea-8ceb-f702265d7368;15ea43cb-2a2d-4140-8e44-900e38f7d2fd;0e85c211-685a-418f-8d10-8328304ea09a;9186012f-97a2-4178-b611-258148912105;21f56142-2611-4a4d-b3e7-d5d7adbb5580;548866bf-19de-48de-87cf-727109863115;", "001c02aa-f1d0-4b55-9218-f8147f50d671")
     res = get_block_multiple_steps("0a0b0d88-24dd-4adb-90e8-bb09e6130dab")
     res = get_solution_name("60b991d7-3603-40fe-bef1-94a55671cd39")
+    res = create_easier_version_pointer("96c6e225-faf8-4a51-894e-4df950b1986f")
     print(res)

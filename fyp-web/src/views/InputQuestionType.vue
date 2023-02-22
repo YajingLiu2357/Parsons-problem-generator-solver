@@ -14,6 +14,7 @@ const name = ref("")
 const description = ref("")
 const scope = ref("")
 const type = ref("")
+const isEasierVersion = ref(false)
 
 // const createQuestion = () => {
 //   if (name.value === "" || description.value === "" || scope.value === "") {
@@ -54,13 +55,27 @@ const choose = async () => {
         Type: type.value,
     }).then((res) => {
         if (res.data.status === 'success') {
-            router.push('/upload_solution/' + QID + '/' + type.value)
+            if (isEasierVersion.value === true) {
+                router.push('/customize_solution/' + QID + '/' + type.value)
+            }else{
+                router.push('/upload_solution/' + QID + '/' + type.value)
+            }
         } else {
             alert(res.data.status)
         }
     })
 }
+const checkEasierVersion = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/check/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            isEasierVersion.value = res.data.isEasierVersion
+        }
+    })
+}
+
 getQuestionInformation()
+checkEasierVersion()
 
 </script>
 

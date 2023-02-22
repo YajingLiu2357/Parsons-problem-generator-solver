@@ -194,3 +194,13 @@ def get_block(QID: str):
 def get_solution_name(BID: str):
     from db.database import get_solution_name
     return get_solution_name(BID)
+
+@app.post('/api/easier_version/create/{QID}')
+def create_easier_version(QID: str):
+    from db.database import create_easier_version_pointer
+    return create_easier_version_pointer(QID)
+
+@app.get('/api/easier_version/check/{QID}')
+def check_easier_version(QID: str):
+    from db.database import check_easier_version
+    return check_easier_version(QID)
