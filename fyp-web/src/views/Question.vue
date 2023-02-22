@@ -31,6 +31,8 @@ const color = reactive([])
 const distractorCode = reactive([])
 const distractorReason = reactive([])
 const white = 'white'
+const black = 'black'
+const grey = '#778899'
 const questionType = route.params.Type
 const blocks = reactive([])
 // For multiple solutions
@@ -43,6 +45,7 @@ const solutionName = ref('')
 const solutionName2 = ref('')
 const distractorCode2 = reactive([])
 const distractorReason2 = reactive([])
+const isPlaceholder = reactive([])
 
 
 const getQuestionInformation = async () => {
@@ -81,7 +84,10 @@ const getFragments = async () => {
                 bid.value = res.data.fragments[i].BID
                 // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
                 if (res.data.fragments[i].Type === 'not context'){
-                    pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
+                    let icon = '\u{1F4CC}'
+                    icon = icon + res.data.fragments[i].Code.replace(/\n/g, '')
+                    pool.code.push(icon)
+                    // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
                 }
                 // indent.push(0)
                 // color.push('white')
@@ -213,10 +219,15 @@ const getSequence = async () => {
                 indentAnswer.push(temp)
                 if(questionType=== 'context'){
                     if (res.data.FragmentType[i] === 'context'){
-                        pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
+                        let icon = '\u{1F4CD}'
+                        icon = icon + res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0')
+                        pool.answer.push(icon)
+                        // pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
                         indent[i] = temp
+                        isPlaceholder[i] = false
                     }else{
                         pool.answer.push('Placeholder. Drag it to the left code pool before checking.')
+                        isPlaceholder[i] = true
                     }
                 }else if (questionType === 'insert-key-code'){
                     if (res.data.FragmentType[i] === 'not key code'){
@@ -416,7 +427,7 @@ getBlocks()
         <h6>{{ solutionName }}</h6>
         <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" @change="removeBackgroundColor()">
             <div v-for="(fragment, i) in pool.answer" :key="i" >
-                <div v-bind:style="[checked == true? {backgroundColor: color[i]} : {backgroundColor: white}]" class="bg-white mt-3 p-2 shadow border rounded">                        
+                <div v-bind:style="[(checked == true? {backgroundColor: color[i]} : {backgroundColor: white}), (isPlaceholder[i] == true? {color: grey} : {color: black})]" class="bg-white mt-3 p-2 shadow border rounded">                        
                     <p>
                         <button @click="decreaseIndent(i)" title="Decrease Indent" type="button" class="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm p-1.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
                             <svg class="w-4 h-4 rotate-180" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
