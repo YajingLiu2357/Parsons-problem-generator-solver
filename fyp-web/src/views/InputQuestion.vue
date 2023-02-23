@@ -18,13 +18,14 @@ const createQuestion = () => {
   if (name.value === "" || description.value === "" || scope.value === "") {
     alert("Please fill in all the fields.")
   } else {
-    if (store.state.userStatus === 'teacher') {
+    if (store.state.userStatus === 'teacher' || store.state.userStatus === 'admin') {
       const query = "http://" + config.apiServer + ":" + config.port + "/api/question/create"
       axios.post(query, {
         Qname: name.value,
         Scope: scope.value,
         Description: description.value,
         Type: type.value,
+        UID: store.state.UID
       }).then((res) => {
         if (res.data.status === 'success') {
           router.push('/input_question_type/' + res.data.uuid)

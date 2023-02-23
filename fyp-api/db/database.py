@@ -982,7 +982,7 @@ def login_check(email: str, password: str):
         playload['status'] = 'error'
         return playload
 
-def create_question_prototype(Qname: str, Scope: str, Description: str, Type: str):
+def create_question_prototype(Qname: str, Scope: str, Description: str, Type: str, UID: str):
     """ Create a new question prototype
     
     Args:
@@ -993,7 +993,7 @@ def create_question_prototype(Qname: str, Scope: str, Description: str, Type: st
     Returns:
         dict: status(success, error), uuid
     """
-    playload=create_question(Qname, Scope, Description, '', Type, '', '8a9c6766-971f-423a-9d43-f094fc926825')
+    playload=create_question(Qname, Scope, Description, '', Type, '', UID)
     return playload
 
 def update_question_solution_seq(QID: str, SolutionSeq: str):

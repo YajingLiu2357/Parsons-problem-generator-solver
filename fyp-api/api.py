@@ -51,6 +51,7 @@ class QuestionData(BaseModel):
     Scope: str
     Description: str
     Type: str
+    UID: str
 
 class UpdateQuestionSolutionSeqData(BaseModel):
     SolutionSeq: str
@@ -107,15 +108,15 @@ async def login(loginData: LoginData):
     from db.database import login_check
     return login_check(loginData.email, loginData.password)
 
-@app.post('/api/register/')
-def register(registerData: RegisterData):
-    from db.database import create_account
-    return create_account(registerData.email.split('@')[0], registerData.email, registerData.password, 'user')
+# @app.post('/api/register/')
+# def register(registerData: RegisterData):
+#     from db.database import create_account
+#     return create_account(registerData.email.split('@')[0], registerData.email, registerData.password, 'user')
 
 @app.post('/api/question/create')
 def create_question(questionData: QuestionData):
     from db.database import create_question_prototype
-    return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description, questionData.Type)
+    return create_question_prototype(questionData.Qname, questionData.Scope, questionData.Description, questionData.Type, questionData.UID)
 
 @app.post('/api/question_solution_seq/update/{QID}')
 def update_question_solution_seq(QID: str, updateQuestionSolutionSeqData: UpdateQuestionSolutionSeqData):
