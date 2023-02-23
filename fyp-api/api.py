@@ -99,6 +99,13 @@ class UserData(BaseModel):
     UType: str
     CID: str
 
+class CreateRecordData(BaseModel):
+    UID: str
+    QID: str
+    Score: str
+
+class UpdateRecordData(BaseModel):
+    Score: str
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -227,3 +234,16 @@ def get_all_class():
 def create_user(userData: UserData):
     from db.database import create_user
     return create_user(userData.Uname, userData.Password, userData.Email, userData.UType, userData.CID)
+
+@app.post('/api/record/create')
+def create_record(createRecordData: CreateRecordData):
+    from db.database import create_record
+    return create_record(createRecordData.UID, createRecordData.QID)
+@app.post('/api/record/update/{UID}/{QID}')
+def update_record(UID: str, QID: str, updateRecordData: UpdateRecordData):
+    from db.database import update_record
+    return update_record(UID, QID, updateRecordData.Score)
+@app.get('/api/record/{UID}/{QID}')
+def get_record(UID: str, QID: str):
+    from db.database import get_record
+    return get_record(UID, QID)

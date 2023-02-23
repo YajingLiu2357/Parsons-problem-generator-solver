@@ -1496,6 +1496,86 @@ def get_all_class():
         playload['status'] = 'error'
         return playload
 
+def create_record(UID: str, QID: str, Score: str):
+    """
+    Create record
+    
+    Args:
+        UID (str): user id
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO `Record` (`UID`, `QID`) VALUES (%s, %s)"
+                cursor.execute(sql, (UID, QID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def get_record(UID: str, QID: str):
+    """
+    Get record
+    
+    Args:
+        UID (str): user id
+        QID (str): question id
+    
+    Returns:
+        dict: status(success, error), record
+    """
+    playload = {'status': '', 'record': None}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Record` WHERE `UID` = %s AND `QID` = %s"
+                cursor.execute(sql, (UID, QID))
+                record = cursor.fetchone()
+                if (record == None):
+                    playload['status'] = 'no record'
+                    return playload
+                playload['record'] = record
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def update_record(UID: str, QID: str, Score: str):
+    """
+    Update record
+    
+    Args:
+        UID (str): user id
+        QID (str): question id
+        Score (str): score
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Record` SET `Score` = %s WHERE `UID` = %s AND `QID` = %s"
+                cursor.execute(sql, (Score, UID, QID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
@@ -1548,4 +1628,6 @@ if __name__ == '__main__':
     res = get_solution_name("60b991d7-3603-40fe-bef1-94a55671cd39")
     res = create_easier_version_pointer("96c6e225-faf8-4a51-894e-4df950b1986f")
     res = get_all_question()
+    res = create_record("8a9c6766-971f-423a-9d43-f094fc926825", "20bbb780-abbd-4583-b60b-4d450304b320")
+    res = get_record("8a9c6766-971f-423a-9d43-f094fc926825", "20bbb780-abbd-4583-b60b-4d450304b320")
     print(res)

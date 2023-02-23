@@ -49,6 +49,7 @@ const isPlaceholder = reactive([])
 // const numberIconList = ['\u{278A}', '\u{278B}', '\u{278C}', '\u{278D}', '\u{278E}', '\u{278F}', '\u{2790}', '\u{2791}', '\u{2792}', '\u{2793}']
 const scoreShow = ref('')
 const scoreShow2 = ref('')
+const totalScore = ref('')
 
 const getQuestionInformation = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -269,9 +270,10 @@ const getSequence2 = async () =>{
         }
     })
 }
-const check = () =>{
+const check = async () =>{
     checked.value = true
     let score = 0
+    let score2 = 0
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){
             let difference = sequence.length - pool.answer.length
@@ -311,7 +313,6 @@ const check = () =>{
     scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
     alert("The answer on the right is scored as " + scoreShow.value + ".")
     if (questionType === "compare-algorithm"){
-        let score2 = 0
         for (let i = 0; i < sequence2.length; i++) {
             if (pool.buffer.length <= i){
                 let difference = sequence2.length - pool.buffer.length
@@ -345,6 +346,37 @@ const check = () =>{
         scoreShow2.value = (score2 / sequence2.length * 100).toFixed(0) + "%"
         alert("The answer on the middle is scored as " + scoreShow2.value + ".")
     }
+    totalScore.value = ((score + score2) / (sequence.length + sequence2.length) * 100).toFixed(0) + "%"
+    console.log(totalScore.value)
+    const queryScore = "http://" + config.apiServer + ":" + config.port + "/api/record/" + store.state.UID + "/" + QID
+    axios.get(queryScore).then((res) => {
+        if (res.data.status === 'success') {
+            console.log(res.data.record)
+            if (res.data.record.length === 0){
+                const query = "http://" + config.apiServer + ":" + config.port + "/api/record/create"
+                axios.post(query, {
+                    UID: store.state.UID,
+                    QID: QID,
+                    Score: totalScore.value
+                }).then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log("Recorded")
+                    }
+                })
+            }else{
+                if (res.data.record.Score < totalScore.value){
+                    const query = "http://" + config.apiServer + ":" + config.port + "/api/record/update/" + store.state.UID + "/" + QID
+                    axios.post(query, {
+                        Score: totalScore.value
+                    }).then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log("Recorded")
+                        }
+                    })
+                }
+            }
+        }
+    })
 }
 const decreaseIndent = (i: number) =>{
     if (questionType === 'multiple-steps'){
