@@ -243,6 +243,10 @@ def create_record(createRecordData: CreateRecordData):
 def update_record(UID: str, QID: str, updateRecordData: UpdateRecordData):
     from db.database import update_record
     return update_record(UID, QID, updateRecordData.Score)
+@app.get('/api/record/getAll/{UID}')
+def get_all_record(UID: str):
+    from db.database import get_all_record
+    return get_all_record(UID)
 @app.get('/api/record/{UID}/{QID}')
 def get_record(UID: str, QID: str):
     from db.database import get_record

@@ -1576,6 +1576,14 @@ def update_record(UID: str, QID: str, Score: str):
         playload['status'] = 'error'
         return playload
 
+def get_all_record(UID: str):
+    """ 
+        Get all record
+        Args: 
+        UID (str): user id
+        QID: question id
+        Sciore: score
+    """
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

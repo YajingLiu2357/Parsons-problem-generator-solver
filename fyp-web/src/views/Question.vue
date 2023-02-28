@@ -50,6 +50,7 @@ const isPlaceholder = reactive([])
 const scoreShow = ref('')
 const scoreShow2 = ref('')
 const totalScore = ref('')
+const contextNum = ref(0)
 
 const getQuestionInformation = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -87,7 +88,7 @@ const getFragments = async () => {
                 bid.value = res.data.fragments[i].BID
                 // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, '').replace(/ /g, '\u00a0'))
                 if (res.data.fragments[i].Type === 'not context'){
-                    let icon = '\u{1F4CC}'
+                    let icon = '\u{00A0}\u{00A0}\u{00A0}\u{00A0}\u{00A0}'
                     icon = icon + res.data.fragments[i].Code.replace(/\n/g, '')
                     pool.code.push(icon)
                     // pool.code.push(res.data.fragments[i].Code.replace(/\n/g, ''))   
@@ -232,14 +233,18 @@ const getSequence = async () => {
                         // pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
                         indent[i] = temp
                         isPlaceholder[i] = false
+                        contextNum.value = contextNum.value + 1
                     }else{
-                        pool.answer.push('Placeholder. Drag it to the left code pool before checking.')
+                        let number = i + 1
+                        let text = 'Placeholder'+' Line' + number + ': drag it to the left code pool before checking.'
+                        pool.answer.push(text)
                         isPlaceholder[i] = true
                     }
                 }else if (questionType === 'insert-key-code'){
                     if (res.data.FragmentType[i] === 'not key code'){
                         pool.answer.push(res.data.sequence[i].replace(/\n/g, '').replace(/ /g, '\u00a0'))
                         indent[i] = temp
+                        contextNum.value = contextNum.value + 1
                     }
                 } 
             }    
@@ -271,6 +276,17 @@ const getSequence2 = async () =>{
     })
 }
 const check = async () =>{
+    if (questionType === 'context'){
+        let deletePlaceHolder = 0
+        for (let i = 0; i < sequence.length; i++){
+            if(pool.answer[i - deletePlaceHolder].toString().includes("Placeholder")){
+                let placeHolderLine = pool.answer[i - deletePlaceHolder].toString()
+                pool.answer.splice(i - deletePlaceHolder, 1)
+                pool.code.push(placeHolderLine)
+                deletePlaceHolder = deletePlaceHolder + 1
+            }
+        }
+    }
     checked.value = true
     let score = 0
     let score2 = 0
@@ -310,8 +326,24 @@ const check = async () =>{
             score = score + 1
         }
     }
-    scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
-    alert("The answer on the right is scored as " + scoreShow.value + ".")
+    if (questionType === 'context' || questionType === 'insert-key-code'){
+        score = score - contextNum.value
+        if (score < 0){
+            alert("You need to place the context in the original place with original indent.")
+            scoreShow.value = (score * 100).toFixed(0) + "%"
+            alert(Math.abs(Math.floor(score)) + " context line(s) is/are not placed in the original place with original indent.")
+        }else if (score === 0){
+            scoreShow.value = (score * 100).toFixed(0) + "%"
+            alert("The answer on the left is scored as " + scoreShow.value + ".")
+        }else {
+            score = score / (sequence.length - contextNum.value)
+            scoreShow.value = (score * 100).toFixed(0) + "%"
+            alert("The answer on the left is scored as " + scoreShow.value + ".")
+        }
+    }else{
+        scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
+        alert("The answer on the right is scored as " + scoreShow.value + ".")
+    }
     if (questionType === "compare-algorithm"){
         for (let i = 0; i < sequence2.length; i++) {
             if (pool.buffer.length <= i){
@@ -384,10 +416,33 @@ const decreaseIndent = (i: number) =>{
         tempList[1] = tempList[1].replace('\u00a0\u00a0\u00a0\u00a0', '')
         pool.answer[i] = tempList[0] + '\u{3011}' + tempList[1]
         indent[i] = indent[i] - 1
+        if (indent[i] < 0){
+            indent[i] = 0
+        }
+    }else if (questionType === 'context'){
+        if (pool.answer[i].includes('\u{1F4D6}')){
+            let tempList = pool.answer[i].split('\u{1F4D6}')
+            tempList[1] = tempList[1].replace('\u00a0\u00a0\u00a0\u00a0', '')
+            pool.answer[i] = tempList[0] + '\u{1F4D6}' + tempList[1]
+            indent[i] = indent[i] - 1
+            if (indent[i] < 0){
+                indent[i] = 0
+            }
+        }else{
+            indent[i] = indent[i] - 1
+            if (indent[i] < 0){
+                indent[i] = 0
+            }else{
+                pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
+            }
+        }
     }else{
         pool.answer[i] = pool.answer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
         indent[i] = indent[i] - 1
-    }   
+        if (indent[i] < 0){
+            indent[i] = 0
+        }
+    }  
 }
 const increaseIndent = (i: number) =>{
     if (questionType === 'multiple-steps'){
@@ -395,10 +450,20 @@ const increaseIndent = (i: number) =>{
         tempList[1] = '\u00a0\u00a0\u00a0\u00a0' + tempList[1]
         pool.answer[i] = tempList[0] + '\u{3011}' + tempList[1]
         indent[i] = indent[i] + 1
+    }else if (questionType === 'context'){
+        if (pool.answer[i].includes('\u{1F4CD}')){
+            let tempList = pool.answer[i].split('\u{1F4CD}')
+            tempList[1] = '\u00a0\u00a0\u00a0\u00a0' + tempList[1]
+            pool.answer[i] = tempList[0] + '\u{1F4CD}' + tempList[1]
+            indent[i] = indent[i] + 1
+        }else{
+            pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
+            indent[i] = indent[i] + 1
+        }
     }else{
         pool.answer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.answer[i]
         indent[i] = indent[i] + 1
-    } 
+    }
 }
 const removeBackgroundColor = () =>{
     for (let i = 0; i < color.length; i++) {

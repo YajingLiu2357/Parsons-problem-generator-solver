@@ -36,6 +36,7 @@ const logout = () => {
                 <a v-show= "state.userStatus == 'visitor'" class="my-1 text-gray-800 hover:text-blue-500 md:mx-4 md:my-0" href="#/login">Login</a>
                 <a v-show="state.userStatus == 'teacher' || state.userStatus == 'admin'" class="my-1 text-gray-800 hover:text-blue-500 md:mx-4 md:my-0" href="#/input_question">Create New Question</a>
                 <p v-show="state.userStatus != 'visitor'">Hi, {{ state.userName }}</p>
+                <a v-show="state.userStatus != 'visitor'" class="my-1 text-gray-800 hover:text-blue-500 md:mx-4 md:my-0" href="#/personal-center">Personal center</a>
                 <a v-show="state.userStatus != 'visitor'" class="my-1 text-gray-800 hover:text-blue-500 md:mx-4 md:my-0" @click ="logout">Logout</a>
             </div>
         </div>
