@@ -478,6 +478,9 @@ const removeBackgroundColor2 = () =>{
 const decreaseIndent2 = (i: number) =>{
     pool.buffer[i] = pool.buffer[i].replace('\u00a0\u00a0\u00a0\u00a0', '')
     indent2[i] = indent2[i] - 1
+    if (indent2[i] < 0){
+        indent2[i] = 0
+    }
 }
 const increaseIndent2 = (i: number) =>{
     pool.buffer[i] = '\u00a0\u00a0\u00a0\u00a0' + pool.buffer[i]
