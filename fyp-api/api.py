@@ -106,6 +106,11 @@ class CreateRecordData(BaseModel):
 
 class UpdateRecordData(BaseModel):
     Score: str
+
+class CreateEasierVersionData(BaseModel):
+    QID: str
+    UID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -215,10 +220,10 @@ def get_solution_name(BID: str):
     from db.database import get_solution_name
     return get_solution_name(BID)
 
-@app.post('/api/easier_version/create/{QID}')
-def create_easier_version(QID: str):
+@app.post('/api/easier_version/create')
+def create_easier_version(createEasierVersionData: CreateEasierVersionData):
     from db.database import create_easier_version_pointer
-    return create_easier_version_pointer(QID)
+    return create_easier_version_pointer(createEasierVersionData.QID, createEasierVersionData.UID)
 
 @app.get('/api/easier_version/check/{QID}')
 def check_easier_version(QID: str):

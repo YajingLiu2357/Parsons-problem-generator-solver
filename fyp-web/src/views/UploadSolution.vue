@@ -39,7 +39,7 @@ const uploadSolution = () => {
     if (solutions.length === 0) {
         alert("Please select at least one file.")
     } else {
-        if (store.state.userStatus === 'teacher') {
+        if (store.state.userStatus === 'teacher' || store.state.userStatus === 'admin') {
             const querySolution = "http://" + config.apiServer + ":" + config.port + "/api/solution/upload"
             const formData = new FormData()
             // let solutionsName = ""

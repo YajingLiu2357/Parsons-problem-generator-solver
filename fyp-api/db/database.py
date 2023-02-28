@@ -1364,12 +1364,13 @@ def get_solution_name(BID: str):
         playload['status'] = 'error'
         return playload
 
-def create_easier_version_pointer (QID: str):
+def create_easier_version_pointer (QID: str, UID: str):
     """
     Create easier version pointer
     
     Args:
         QID (str): question id
+        UID (str): user id
     
     Returns:
         dict: status(success, error), easier version QID
@@ -1379,6 +1380,7 @@ def create_easier_version_pointer (QID: str):
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
+                print("enter")
                 sql = "SELECT * FROM `Question` WHERE `QID` = %s"
                 cursor.execute(sql, (QID))
                 result = cursor.fetchone()
@@ -1391,8 +1393,9 @@ def create_easier_version_pointer (QID: str):
                     Description = result['Description']
                     Type = ''
                     SolutionSeq = result['SolutionSeq']
-                    question = create_question_prototype(Qname, Scope, Description, Type)
+                    question = create_question_prototype(Qname, Scope, Description, Type, UID)
                     playload['EasierVersionQID'] = question['uuid']
+                    print("question created")
                     SolutionSeq = SolutionSeq.split(';')
                     SolutionSeq.pop()
                     for solution in SolutionSeq:
@@ -1405,6 +1408,7 @@ def create_easier_version_pointer (QID: str):
                     sql = "INSERT INTO `EasierVersionPointer` (`OriginalQID`, `EasierVersionQID`) VALUES (%s, %s)"
                     cursor.execute(sql, (QID, playload['EasierVersionQID']))
                     connection.commit()
+                    print("easier version created")
                     playload['status'] = 'success'
                     return playload
     except:

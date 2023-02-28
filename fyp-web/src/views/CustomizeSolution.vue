@@ -310,11 +310,13 @@ const createEasierVersion = async () => {
                     Type: "context",
                 }).then((res) => {
                     if (i == codeLength.value - 1){
-                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create/" + QID
+                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create"
                         axios.post(queryEasierVersion, {
                             QID: QID,
+                            UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
+                                alert("Create Easier Version Success")
                                 router.push(('/input_question_type/' + res.data.EasierVersionQID))
                             }
                         })
@@ -326,11 +328,13 @@ const createEasierVersion = async () => {
                     Type: "not context",
                 }).then((res) => {
                     if (i == codeLength.value - 1){
-                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create/" + QID
+                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create"
                         axios.post(queryEasierVersion, {
                             QID: QID,
+                            UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
+                                alert("Create Easier Version Success")
                                 router.push(('/input_question_type/' + res.data.EasierVersionQID))
                             }
                         })
@@ -348,11 +352,13 @@ const createEasierVersion = async () => {
                     Type: "key code",
                 }).then((res) => {
                     if (i == codeLength.value - 1){
-                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create/" + QID
+                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create"
                         axios.post(queryEasierVersion, {
                             QID: QID,
+                            UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
+                                alert("Easier version created")
                                 router.push(('/input_question_type/' + res.data.EasierVersionQID))
                             }
                         })
@@ -364,11 +370,13 @@ const createEasierVersion = async () => {
                     Type: "not key code",
                 }).then((res) => {
                     if (i == codeLength.value - 1){
-                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create/" + QID
+                        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create"
                         axios.post(queryEasierVersion, {
                             QID: QID,
+                            UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
+                                alert("Easier version created")
                                 router.push(('/input_question_type/' + res.data.EasierVersionQID))
                             }
                         })
@@ -378,12 +386,13 @@ const createEasierVersion = async () => {
         }
     }
     else{
-        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create/" + QID
+        const queryEasierVersion = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/create"
         axios.post(queryEasierVersion, {
             QID: QID,
+            UID: store.state.UID,
         }).then((res) => {
             if (res.data.status === 'success') {
-                alert(res.data.EasierVersionQID)
+                alert("Easier version created")
                 router.push(('/input_question_type/' + res.data.EasierVersionQID))
             }
         })
