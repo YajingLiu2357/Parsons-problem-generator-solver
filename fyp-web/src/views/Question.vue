@@ -506,11 +506,29 @@ getQuestionInformation()
 getBlocks()
 </script>
 <template>
-  <div class="container mx-auto sm:px-4 mt-5 mb-5">
+<div class="w-full container mx-auto px-4">
+    <div class="flex flex-col items-center">
+            <p class="font-bold text-gray-800 hover:text-gray-700 text-2xl">
+                {{ name }}
+            </p>
+        </div>
+    <div class="flex flex-col items-start px-3 pt-2">
+        <p class="text-base text-gray-600">
+                {{ description }}
+        </p>
+        <p class="font-bold">Note:
+                <span class="text-red-500">Red: Wrong Code;</span>&nbsp;
+                <span class="text-yellow-400">Yellow:  Wrong Indent;</span>&nbsp;
+                <span class="text-green-500">Green: Correct</span>
+        </p>
+    </div>
+    </div>
+  <div class="container mx-auto sm:px-4 mt-4 mb-5">
     <div class="flex flex-wrap ">
-      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
-        <h6>Question: {{ name }}</h6>
-        <p>{{ description }}</p>
+      <div class="relative flex-grow max-w-full flex-1 mx-2 px-2 py-3 bg-[#accfc7] border rounded">
+        <!-- <h6>Question: {{ name }}</h6>
+        <p>{{ description }}</p> -->
+        <p><b>Drag from here:</b></p>
             <VueDraggableNext class = "draggable-list" :list="pool.code" group="pool" >
                 <div v-for="(fragment, i) in pool.code" :key="i">
                     <div class="bg-white mt-3 p-2 shadow border rounded">
@@ -518,14 +536,15 @@ getBlocks()
                     </div>
                 </div>
             </VueDraggableNext>
-            <p class="font-bold mt-3">Note: <br>
+            <!-- <p class="font-bold mt-3 bg-slate-100">Note: <br>
                 <span class="text-red-500">Red:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wrong Code;</span><br>
                 <span class="text-yellow-400">Yellow: &nbsp;Wrong Indent;</span> <br>
                 <span class="text-green-500">Green: &nbsp;&nbsp;Correct</span>
-            </p>
+            </p> -->
         </div>
-        <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded" v-show="questionType === 'compare-algorithm'">
+        <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-[#7D8AAB] border rounded" v-show="questionType === 'compare-algorithm'">
         <h6>{{ solutionName2 }}</h6>
+        <p><b>Construct your solution here:</b></p>
         <VueDraggableNext class = "draggable-list" :list="pool.buffer" group = "pool" @change="removeBackgroundColor2()">
             <div v-for="(fragment, i) in pool.buffer" :key="i" >
                 <div v-bind:style="[checked == true? {backgroundColor: color2[i]} : {backgroundColor: white}]" class="bg-white mt-3 p-2 shadow border rounded">                        
@@ -544,8 +563,9 @@ getBlocks()
             </div>
         </VueDraggableNext>
     </div>
-      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-gray-100 border rounded">
+      <div class="relative flex-grow max-w-full flex-1 px-4 mx-2 px-2 py-3 bg-[#7D8AAB] border rounded">
         <h6>{{ solutionName }}</h6>
+        <p><b>Construct your solution here:</b></p>
         <VueDraggableNext class = "draggable-list" :list="pool.answer" group = "pool" @change="removeBackgroundColor()">
             <div v-for="(fragment, i) in pool.answer" :key="i" >
                 <div v-bind:style="[(checked == true? {backgroundColor: color[i]} : {backgroundColor: white}), (isPlaceholder[i] == true? {color: grey} : {color: black})]" class="bg-white mt-3 p-2 shadow border rounded">                        

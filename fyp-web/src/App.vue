@@ -6,7 +6,7 @@ import NavigationBar from "./components/NavigationBar.vue";
 
 <template>
   <NavigationBar />
-  <div class="container mx-auto my-5">
+  <div class="container mx-auto my-4">
     <div class="flex sm:justify-center space-x-4" id="nav">
       
       <!-- <router-link
