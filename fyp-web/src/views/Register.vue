@@ -150,7 +150,7 @@ getClassName()
             type="submit"
             @click="register"
         >
-          Login
+          Register
         </button>
       </div>
     </div>

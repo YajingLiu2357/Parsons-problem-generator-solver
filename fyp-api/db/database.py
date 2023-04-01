@@ -978,6 +978,9 @@ def login_check(email: str, password: str):
                     playload['status'] = 'success'
                     playload['user'] = result
                     return playload
+                else:
+                    playload['status'] = 'Wrong user email or password'
+                    return playload
     except:
         playload['status'] = 'error'
         return playload

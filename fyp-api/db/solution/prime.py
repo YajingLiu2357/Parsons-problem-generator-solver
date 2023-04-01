@@ -1,12 +1,13 @@
-def prime(bound):
-	prm = []
-	for i in range(3, bound):
-		for j in range(i):
-			if i % d == 0:
-				break
-		if j == i-1:
-			prm.append(i)
-	return prm
-
-if __name__ == "__main__":
-	print(prime(10))
+num = 29
+flag = False
+if num == 1:
+    print(num, "is not a prime number")
+elif num > 1:
+    for i in range(2, num):
+        if (num % i) == 0:
+            flag = True
+            break
+    if flag:
+        print(num, "is not a prime number")
+    else:
+        print(num, "is a prime number")
