@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore} from 'vuex'
 import FormData from 'form-data'
 import { VueDraggableNext } from 'vue-draggable-next'
+import { STATEMENT_OR_BLOCK_KEYS } from "@babel/types"
 
 const route = useRoute()
 const router = useRouter()
@@ -382,19 +383,20 @@ const check = async () =>{
     console.log(totalScore.value)
     const queryScore = "http://" + config.apiServer + ":" + config.port + "/api/record/" + store.state.UID + "/" + QID
     axios.get(queryScore).then((res) => {
-        if (res.data.status === 'success') {
-            console.log(res.data.record)
-            if (res.data.record.length === 0){
-                const query = "http://" + config.apiServer + ":" + config.port + "/api/record/create"
-                axios.post(query, {
-                    UID: store.state.UID,
-                    QID: QID,
-                    Score: totalScore.value
-                }).then((res) => {
+        if (res.data.status === 'success' || res.data.status === 'no record') {
+            if (res.data.status == 'no record'){
+                if (store.state.userStatus == 'student'){
+                    const query = "http://" + config.apiServer + ":" + config.port + "/api/record/create"
+                    axios.post(query, {
+                        UID: store.state.UID,
+                        QID: QID,
+                        Score: totalScore.value
+                    }).then((res) => {
                     if (res.data.status === 'success') {
                         console.log("Recorded")
                     }
-                })
+                }) 
+            }
             }else{
                 if (res.data.record.Score < totalScore.value){
                     const query = "http://" + config.apiServer + ":" + config.port + "/api/record/update/" + store.state.UID + "/" + QID
@@ -407,6 +409,8 @@ const check = async () =>{
                     })
                 }
             }
+        }else{
+            alert(res.data.status)
         }
     })
 }

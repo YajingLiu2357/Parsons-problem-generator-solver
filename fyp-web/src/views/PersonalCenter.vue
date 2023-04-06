@@ -5,20 +5,40 @@ import config from "../config"
 import { useRoute, useRouter } from 'vue-router'
 import { useStore} from 'vuex'
 import FormData from 'form-data'
+import router from "../router/router"
+const store = useStore()
 const state = computed(() => store.state)
-const questionName = ref("")
-const questionType = ref("")
-const questionID = ref("")
-const score = ref("")
+const questionName = reactive([])
+const questionType = reactive([])
+const questionID = reactive([])
+const score = reactive([])
+const count = ref(0)
 const getAllScore = async() =>{
-    const query = "http://" + config.apiServer + ":" + config.port + "/api/score/getAll/" + state.UID
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/" + state.value.UID
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
-            console.log(res.data)
+            count.value = res.data.records.length
+           for (let i = 0; i < res.data.records.length; i++) {
+               questionID.push(res.data.records[i].QID)
+               score.push(res.data.records[i].Score)
+               const query1 = "http://" + config.apiServer + ":" + config.port + "/api/question/" + questionID[i]
+                axios.get(query1).then((res) => {
+                     if (res.data.status === 'success') {
+                          questionName.push(res.data.question.Qname)
+                          questionType.push(res.data.question.Type)
+                     } else {
+                          alert(res.data.status)
+                     }
+                })
+           }
         } else {
             alert(res.data.status)
         }
     })
+}
+getAllScore()
+const tryAgain = (i:number) => {
+    router.push('/question/' + questionID[i] + '/' + questionType[i])
 }
 </script>
 <template>
@@ -42,48 +62,23 @@ const getAllScore = async() =>{
             </tr>
         </thead>
         <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <tr v-for="i in count" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple MacBook Pro 17"
+                    {{ questionName[i-1] }}
                 </th>
                 <td class="px-6 py-4">
-                    Silver
+                    {{ questionType[i-1] }}
                 </td>
                 <td class="px-6 py-4">
-                    Laptop
+                    {{ score[i-1] }}
                 </td>
                 <td class="px-6 py-4">
-                    $2999
+                    <a @click=" tryAgain(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Try Again
+                    </a>
                 </td>
             </tr>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Microsoft Surface Pro
-                </th>
-                <td class="px-6 py-4">
-                    White
-                </td>
-                <td class="px-6 py-4">
-                    Laptop PC
-                </td>
-                <td class="px-6 py-4">
-                    $1999
-                </td>
-            </tr>
-            <tr class="bg-white dark:bg-gray-800">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Magic Mouse 2
-                </th>
-                <td class="px-6 py-4">
-                    Black
-                </td>
-                <td class="px-6 py-4">
-                    Accessories
-                </td>
-                <td class="px-6 py-4">
-                    $99
-                </td>
-            </tr>
+            
         </tbody>
     </table>
 </div>  

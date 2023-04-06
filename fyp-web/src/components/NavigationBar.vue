@@ -18,7 +18,6 @@ const logout = () => {
     store.commit('signOut')
     router.push('/')
 }
-
 </script>
 <template>
     <nav class="bg-white px-6 py-4">

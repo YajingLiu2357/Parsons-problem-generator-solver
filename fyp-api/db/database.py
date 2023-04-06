@@ -1516,11 +1516,12 @@ def create_record(UID: str, QID: str, Score: str):
     """
     playload = {'status': ''}
     try:
+        print("create record")
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `Record` (`UID`, `QID`) VALUES (%s, %s)"
-                cursor.execute(sql, (UID, QID))
+                sql = "INSERT INTO `Record` (`UID`, `QID`, `Score`) VALUES (%s, %s, %s)"
+                cursor.execute(sql, (UID, QID, Score))
                 connection.commit()
                 playload['status'] = 'success'
                 return playload
@@ -1583,7 +1584,7 @@ def update_record(UID: str, QID: str, Score: str):
         playload['status'] = 'error'
         return playload
 
-def get_all_record(UID: str):
+def get_all_record_student(UID: str):
     """ 
         Get all record
         Args: 
@@ -1591,6 +1592,25 @@ def get_all_record(UID: str):
         QID: question id
         Sciore: score
     """
+    playload = {'status': '', 'records': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Record` WHERE `UID` = %s"
+                cursor.execute(sql, (UID))
+                result = cursor.fetchall()
+                if (len(result) == 0):
+                    playload['status'] = 'no record'
+                    return playload
+                else:
+                    playload['status'] = 'success'
+                    playload['records'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")
