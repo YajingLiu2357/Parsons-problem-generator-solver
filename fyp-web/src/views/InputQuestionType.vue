@@ -85,7 +85,7 @@ checkEasierVersion()
         <h2 class="text-left font-medium text-gray-900">
           <div class="text-2xl">Choose Proper Question Type:</div>
           <div class="text-md">You can get some ideas from the conceptual gif images, and choose most appropriate one to describe your question.</div>
-          <div class="text-md"><span class="font-bold">Note: </span>What is shown in conceptual images may not be indentical with actual situation.</div>
+          <div class="text-md"><span class="font-bold">Note: </span>What is shown in conceptual images may not be identical with actual situation.</div>
         </h2>
         <div class="creation_form">
           <div class="border rounded-lg shadow-lg bg-white px-4">
@@ -95,7 +95,7 @@ checkEasierVersion()
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Traditional</h5>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question is the most basic Parsons Problem.</p>
-                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer pool.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer sheet.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The code is divided into line level.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- No tip.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
@@ -107,7 +107,7 @@ checkEasierVersion()
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Context</h5>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question provides some context codes as tips.</p>
-                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer pool.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer sheet.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The code is divided into line level.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Some codes can be given in order as tips.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
@@ -135,7 +135,7 @@ checkEasierVersion()
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Multiple Steps</h5>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question provides 'step' labels as tips.</p>
-                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer pool.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer sheet.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The lines covered by each step need to be preset.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- 'Step' label given as tips.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
@@ -155,7 +155,7 @@ checkEasierVersion()
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Compare Algorithm</h5>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question is to split two algorithms from one code pool.</p>
-                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and two answer pools.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and two answer sheets.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The code is divided into line level.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- No tip.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
