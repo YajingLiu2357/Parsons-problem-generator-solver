@@ -13,6 +13,13 @@ const questionType = reactive([])
 const questionID = reactive([])
 const score = reactive([])
 const count = ref(0)
+const manageCount = ref(0)
+const manageQuestionID = reactive([])
+const manageQuestionName = reactive([])
+const manageQuestionType = reactive([])
+const showCreateClass = ref(false)
+const className = ref('')
+const classID = ref('')
 const getAllScore = async() =>{
     if (state.value.userStatus == "student"){
         const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/student/" + state.value.UID
@@ -61,6 +68,136 @@ getAllScore()
 const tryAgain = (i:number) => {
     router.push('/question/' + questionID[i] + '/' + questionType[i])
 }
+const listQuestion = async () => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/question/getAll/teacher/" + state.value.UID
+        axios.get(query).then((res) => {
+            if (res.data.status === 'success') {
+                manageCount.value = res.data.questions.length
+                console.log(res.data.questions.length)
+                for (let i = 0; i < res.data.questions.length; i++) {
+                    manageQuestionID.push(res.data.questions[i].QID)
+                    manageQuestionName.push(res.data.questions[i].Qname)
+                    manageQuestionType.push(res.data.questions[i].Type)
+                }
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
+// Create a new question
+const createQuestion = () => {
+    if (state.value.userStatus != "student"){
+        router.push('/input_question')
+    }
+}
+// Update the question
+// const updateQuestion = async (i:number) => {
+//     const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + manageQuestionID[i]
+//     axios.put(query).then((res) => {
+//         if (res.data.status === 'success') {
+//             alert("Update successfully")
+//         } else {
+//             alert(res.data.status)
+//         }
+//     })
+// }
+// Delete the question
+const deleteQuestion = async (i:number) => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + manageQuestionID[i]
+        axios.delete(query).then((res) => {
+        if (res.data.status === 'success') {
+            alert("Delete successfully")
+        } else {
+            alert(res.data.status)
+        }
+    })
+    }
+}
+listQuestion()
+
+// Create a new class
+const showCreateClassBox = () => {
+    showCreateClass.value = true
+}
+// May lack of back-end support
+// const createClass = async () => {
+//     if (state.value.userStatus != "student"){
+//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/create/" + state.value.UID
+//         axios.post(query, {
+//             Cname: className.value
+//         }).then((res) => {
+//             if (res.data.status === 'success') {
+//                 alert("Create successfully")
+//                 showCreateClass.value = false
+//             } else {
+//                 alert(res.data.status)
+//             }
+//         })
+//     }
+// }
+// const listClass = async () => {
+//     if (state.value.userStatus != "student"){
+//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/getAll/teacher/" + state.value.UID
+//         axios.get(query).then((res) => {
+//             if (res.data.status === 'success') {
+//                 classCount.value = res.data.classes.length
+//                 for (let i = 0; i < res.data.classes.length; i++) {
+//                     classID.push(res.data.classes[i].CID)
+//                     className.push(res.data.classes[i].Cname)
+//                 }
+//             } else {
+//                 alert(res.data.status)
+//             }
+//         })
+//     }
+// }
+// const updateClass = async () => {
+//     if (state.value.userStatus != "student"){
+//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID.value
+//         axios.put(query, {
+//             Cname: className.value
+//         }).then((res) => {
+//             if (res.data.status === 'success') {
+//                 alert("Update successfully")
+//             } else {
+//                 alert(res.data.status)
+//             }
+//         })
+//     }
+// }
+// const deleteClass = async () => {
+//     if (state.value.userStatus != "student"){
+//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID.value
+//         axios.delete(query).then((res) => {
+//             if (res.data.status === 'success') {
+//                 alert("Delete successfully")
+//             } else {
+//                 alert(res.data.status)
+//             }
+//         })
+//     }
+// }
+
+// const updateUserInformation = () => {
+//     if (state.value.userStatus != "student"){
+//         router.push('/update_user_information')
+//     }
+// }
+// const deleteUser = async () => {
+//     if (state.value.userStatus != "student"){
+//         const query = "http://" + config.apiServer + ":" + config.port + "/api/user/" + state.value.UID
+//         axios.delete(query).then((res) => {
+//             if (res.data.status === 'success') {
+//                 alert("Delete successfully")
+//             } else {
+//                 alert(res.data.status)
+//             }
+//         })
+//     }
+// }
 </script>
 <template>
 <div class="container mx-auto sm:px-4 mt-5 mb-5" v-show="state.userStatus == 'student'">

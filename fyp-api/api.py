@@ -150,6 +150,11 @@ def create_solution(solutionData: SolutionData):
     from db.database import create_solution
     return create_solution(solutionData.Sname, solutionData.Type, solutionData.QID)
 
+@app.get('/api/question/getAll/teacher/{UID}')
+def get_all_question_teacher(UID: str):
+    from db.database import get_all_question_teacher
+    return get_all_question_teacher(UID)
+
 @app.get('/api/question/getAll')
 def get_all_question():
     from db.database import get_all_question
@@ -159,6 +164,11 @@ def get_all_question():
 def get_question(QID: str):
     from db.database import get_question
     return get_question(QID)
+
+@app.delete('/api/question/delete/{QID}')
+def delete_question(QID: str):
+    from db.database import delete_question
+    return delete_question(QID)
 
 @app.get('/api/fragment/{QID}')
 def get_fragment(QID: str):
