@@ -1611,6 +1611,32 @@ def get_all_record_student(UID: str):
         playload['status'] = 'error'
         return playload
 
+def get_all_record_teacher():
+    """ 
+        Get all record
+        Args: 
+        UID (str): user id
+        QID: question id
+        Sciore: score
+    """
+    playload = {'status': '', 'records': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT `QID`, AVG(`Score`) AS `Score` FROM `Record` GROUP BY `QID`"
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                if (len(result) == 0):
+                    playload['status'] = 'no record'
+                    return playload
+                else:
+                    playload['status'] = 'success'
+                    playload['records'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

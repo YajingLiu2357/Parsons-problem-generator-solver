@@ -248,10 +248,14 @@ def create_record(createRecordData: CreateRecordData):
 def update_record(UID: str, QID: str, updateRecordData: UpdateRecordData):
     from db.database import update_record
     return update_record(UID, QID, updateRecordData.Score)
-@app.get('/api/record/getAll/{UID}')
+@app.get('/api/record/getAll/student/{UID}')
 def get_all_record_student(UID: str):
     from db.database import get_all_record_student
     return get_all_record_student(UID)
+@app.get('/api/record/getAll/teacher/')
+def get_all_record_teacher():
+    from db.database import get_all_record_teacher
+    return get_all_record_teacher()
 @app.get('/api/record/{UID}/{QID}')
 def get_record(UID: str, QID: str):
     from db.database import get_record
