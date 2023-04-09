@@ -1619,12 +1619,15 @@ def get_all_record_teacher():
         QID: question id
         Sciore: score
     """
+    """not group by class"""
     playload = {'status': '', 'records': []}
     try:
         connection = create_connection()
         with connection:
             with connection.cursor() as cursor:
-                sql = "SELECT `QID`, AVG(`Score`) AS `Score` FROM `Record` GROUP BY `QID`"
+                # sql = "SELECT `QID`, AVG(`Score`) AS `Score` FROM `Record` GROUP BY `QID`"
+                # Not support multiple teachers
+                sql = "SELECT Class.Cname, Record.QID, Question.Qname,  Question.type, AVG(Record.Score) AS Score FROM Record JOIN User ON Record.UID = User.UID JOIN Class ON User.CID = Class.CID JOIN Question ON Record.QID = Question.QID GROUP BY Class.Cname, Record.QID"
                 cursor.execute(sql)
                 result = cursor.fetchall()
                 if (len(result) == 0):
