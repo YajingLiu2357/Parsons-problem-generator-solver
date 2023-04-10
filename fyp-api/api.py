@@ -111,6 +111,11 @@ class CreateEasierVersionData(BaseModel):
     QID: str
     UID: str
 
+class UpdateQuestionData(BaseModel):
+    Qname: str
+    Scope: str
+    Description: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -165,7 +170,12 @@ def get_question(QID: str):
     from db.database import get_question
     return get_question(QID)
 
-@app.delete('/api/question/delete/{QID}')
+@app.patch('/api/question/{QID}')
+def update_question(QID: str, updateQuestionData: UpdateQuestionData):
+    from db.database import update_question_part
+    return update_question_part(QID, updateQuestionData.Qname, updateQuestionData.Scope, updateQuestionData.Description)
+
+@app.delete('/api/question/{QID}')
 def delete_question(QID: str):
     from db.database import delete_question
     return delete_question(QID)
@@ -262,10 +272,10 @@ def update_record(UID: str, QID: str, updateRecordData: UpdateRecordData):
 def get_all_record_student(UID: str):
     from db.database import get_all_record_student
     return get_all_record_student(UID)
-@app.get('/api/record/getAll/teacher/')
-def get_all_record_teacher():
+@app.get('/api/record/getAll/teacher/{UID}')
+def get_all_record_teacher(UID: str):
     from db.database import get_all_record_teacher
-    return get_all_record_teacher()
+    return get_all_record_teacher(UID)
 @app.get('/api/record/{UID}/{QID}')
 def get_record(UID: str, QID: str):
     from db.database import get_record

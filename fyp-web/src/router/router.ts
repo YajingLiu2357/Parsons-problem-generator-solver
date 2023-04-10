@@ -17,5 +17,6 @@ export default createRouter({
     { path: "/customize_solution/:QID/:Type", component: () => import(/* webpackChunkName: "home" */ "../views/CustomizeSolution.vue") },
     { path: "/input_question_type/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/InputQuestionType.vue") },
     { path: "/personal-center", component: () => import(/* webpackChunkName: "home" */ "../views/PersonalCenter.vue") },
+    { path: "/edit_question/:QID", component: () => import(/* webpackChunkName: "home" */ "../views/EditQuestion.vue") },
   ]
 })

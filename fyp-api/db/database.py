@@ -355,6 +355,31 @@ def update_question(QID: str, Qname: str, Scope: str, Description: str, PIC: str
     except:
         playload['status'] = 'error'
         return playload
+def update_question_part(QID: str, Qname: str, Scope: str, Description: str):
+    """ Update question information
+
+    Args: 
+        QID (str): question id
+        Qname (str): question name
+        Scope (str): question scope
+        Description (str): question description
+    
+    Returns:
+        dict: status(success, error)
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Question` SET `QName`=%s, `Scope`=%s, `Description`=%s WHERE `QID`=%s"
+                cursor.execute(sql, (Qname, Scope, Description, QID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 
 def delete_question(QID: str):
     """ Delete question
@@ -1611,7 +1636,7 @@ def get_all_record_student(UID: str):
         playload['status'] = 'error'
         return playload
 
-def get_all_record_teacher():
+def get_all_record_teacher(UID: str):
     """ 
         Get all record
         Args: 
@@ -1627,8 +1652,8 @@ def get_all_record_teacher():
             with connection.cursor() as cursor:
                 # sql = "SELECT `QID`, AVG(`Score`) AS `Score` FROM `Record` GROUP BY `QID`"
                 # Not support multiple teachers
-                sql = "SELECT Class.Cname, Record.QID, Question.Qname,  Question.type, AVG(Record.Score) AS Score FROM Record JOIN User ON Record.UID = User.UID JOIN Class ON User.CID = Class.CID JOIN Question ON Record.QID = Question.QID GROUP BY Class.Cname, Record.QID"
-                cursor.execute(sql)
+                sql = "SELECT Class.Cname, Record.QID, Question.Qname,  Question.type, AVG(Record.Score) AS Score FROM Record JOIN User ON Record.UID = User.UID JOIN Class ON User.CID = Class.CID JOIN Question ON Record.QID = Question.QID WHERE Class.UID = %s GROUP BY Class.Cname, Record.QID"
+                cursor.execute(sql, (UID))
                 result = cursor.fetchall()
                 if (len(result) == 0):
                     playload['status'] = 'no record'

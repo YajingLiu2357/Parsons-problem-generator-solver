@@ -49,7 +49,7 @@ const getAllScore = async() =>{
         }
     })
     }else{
-        const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/teacher/"
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/teacher/" + state.value.UID
         axios.get(query).then((res) => {
             count.value = res.data.records.length
             console.log(res.data.status)
@@ -126,17 +126,14 @@ const createQuestion = () => {
         router.push('/input_question')
     }
 }
-// Update the question
-// const updateQuestion = async (i:number) => {
-//     const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + manageQuestionID[i]
-//     axios.put(query).then((res) => {
-//         if (res.data.status === 'success') {
-//             alert("Update successfully")
-//         } else {
-//             alert(res.data.status)
-//         }
-//     })
-// }
+
+// Edit the question
+const editQuestion = (i:number) => {
+    if (state.value.userStatus != "student"){
+        router.push('/edit_question/' + manageQuestionID[i])
+    }
+}
+
 // Delete the question
 const deleteQuestion = async (i:number) => {
     if (state.value.userStatus != "student"){
@@ -144,6 +141,10 @@ const deleteQuestion = async (i:number) => {
         axios.delete(query).then((res) => {
         if (res.data.status === 'success') {
             alert("Delete successfully")
+            manageQuestionID.splice(i, 1)
+            manageQuestionName.splice(i, 1)
+            manageQuestionType.splice(i, 1)
+            manageCount.value -= 1
         } else {
             alert(res.data.status)
         }
@@ -345,9 +346,10 @@ const showCreateClassBox = () => {
             </div>
             <div class="container mx-auto sm:px-4 mt-5 mb-5" v-show="state.userStatus != 'student'">
                 <div class="relative overflow-x-auto">
-                    <div v-for="Class in CnameShow">
-                        <h3 class="text-xl pb-5">{{ Class }}</h3>
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <button @click="createQuestion" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create New Question</button>
+                    <p class="text-lg font-semibold">Note: The edit action can only change the basic informaiton about the question (question name, question scope and question description).</p>
+                    <p class="text-lg font-semibold">If you need to change the question type, prepared solution and customization, you can only delete the question and recreate it again.</p>
+                    <table class="mt-3 w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                     <th scope="col" class="px-6 py-3">
@@ -357,57 +359,35 @@ const showCreateClassBox = () => {
                         Question Type
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Average Score
+                        Edit
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Delete
                     </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="i in count" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                     <th v-show="Class == Cname[i-1]" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ questionName[i-1] }}
-                    </th>
-                    <td class="px-6 py-4" v-show="Class == Cname[i-1]">
-                        {{ questionType[i-1] }}
-                    </td>
-                    <td class="px-6 py-4" v-show="Class == Cname[i-1]">
-                        {{ score[i-1] }}
-                    </td>
-                    </tr>
-                    </tbody>
-                    </table>
-                    </div>
-                </div>
-                <!-- <div class="relative overflow-x-auto">
-                    <h3 class="text-xl pb-5">COMP121</h3>
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Question Name
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Question Type
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Average Score
-                    </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="i in count" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr v-for="i in manageCount" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ questionName[i-1] }}
+                        {{ manageQuestionName[i-1] }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ questionType[i-1] }}
+                        {{ manageQuestionType[i-1] }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ score[i-1] }}
+                        <a @click=" editQuestion(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Edit
+                    </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a @click=" deleteQuestion(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Delete
+                    </a>
                     </td>
                     </tr>
                     </tbody>
                     </table>
-                </div>   -->
+                </div>
             </div>
             </div>
         </div>
