@@ -116,6 +116,13 @@ class UpdateQuestionData(BaseModel):
     Scope: str
     Description: str
 
+class UpdateClassData(BaseModel):
+    Cname: str
+
+class CreateClassData(BaseModel):
+    Cname: str
+    UID: str
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -280,3 +287,19 @@ def get_all_record_teacher(UID: str):
 def get_record(UID: str, QID: str):
     from db.database import get_record
     return get_record(UID, QID)
+@app.get('/api/class/getAll/teacher/{UID}')
+def get_all_class_teacher(UID: str):
+    from db.database import get_all_class_teacher
+    return get_all_class_teacher(UID)
+@app.patch('/api/class/{CID}')
+def update_class(CID: str, updateClassData: UpdateClassData):
+    from db.database import update_class_part
+    return update_class_part(CID, updateClassData.Cname)
+@app.post('/api/class')
+def create_class(createClassData: CreateClassData):
+    from db.database import create_class
+    return create_class(createClassData.Cname, createClassData.UID)
+@app.delete('/api/class/{CID}')
+def delete_class(CID: str):
+    from db.database import delete_class
+    return delete_class(CID)

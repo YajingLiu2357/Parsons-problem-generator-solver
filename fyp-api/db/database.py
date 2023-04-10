@@ -1693,6 +1693,54 @@ def get_all_question_teacher(UID):
         playload['status'] = 'error'
         return playload
 
+def get_all_class_teacher(UID):
+    """ 
+        Get all class
+        Args: 
+        UID (str): user id
+        QID: question id
+        Sciore: score
+    """
+    playload = {'status': '', 'classes': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM `Class` WHERE `UID` = %s"
+                cursor.execute(sql, (UID))
+                result = cursor.fetchall()
+                if (len(result) == 0):
+                    playload['status'] = 'no class'
+                    return playload
+                else:
+                    playload['status'] = 'success'
+                    playload['classes'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def update_class_part(CID: str, Cname: str):
+    """ 
+        Update class
+        Args: 
+        CID (str): class id
+        Cname (str): class name
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `Class` SET `Cname` = %s WHERE `CID` = %s"
+                cursor.execute(sql, (Cname, CID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

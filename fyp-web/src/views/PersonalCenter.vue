@@ -20,11 +20,13 @@ const manageQuestionID = reactive([])
 const manageQuestionName = reactive([])
 const manageQuestionType = reactive([])
 const showCreateClass = ref(false)
-const className = ref('')
-const classID = ref('')
+const className = reactive([])
+const classID = reactive([])
+const classCount = ref(0)
 const viewRecord = ref(true)
 const viewQuestion = ref(false)
 const viewClass = ref(false)
+const showEditClass = reactive([])
 const getAllScore = async() =>{
     if (state.value.userStatus == "student"){
         const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/student/" + state.value.UID
@@ -154,67 +156,62 @@ const deleteQuestion = async (i:number) => {
 listQuestion()
 
 // Create a new class
-const showCreateClassBox = () => {
-    showCreateClass.value = true
+const createClass = () => {
+    router.push('/create_class')
 }
-// May lack of back-end support
-// const createClass = async () => {
-//     if (state.value.userStatus != "student"){
-//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/create/" + state.value.UID
-//         axios.post(query, {
-//             Cname: className.value
-//         }).then((res) => {
-//             if (res.data.status === 'success') {
-//                 alert("Create successfully")
-//                 showCreateClass.value = false
-//             } else {
-//                 alert(res.data.status)
-//             }
-//         })
-//     }
-// }
-// const listClass = async () => {
-//     if (state.value.userStatus != "student"){
-//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/getAll/teacher/" + state.value.UID
-//         axios.get(query).then((res) => {
-//             if (res.data.status === 'success') {
-//                 classCount.value = res.data.classes.length
-//                 for (let i = 0; i < res.data.classes.length; i++) {
-//                     classID.push(res.data.classes[i].CID)
-//                     className.push(res.data.classes[i].Cname)
-//                 }
-//             } else {
-//                 alert(res.data.status)
-//             }
-//         })
-//     }
-// }
-// const updateClass = async () => {
-//     if (state.value.userStatus != "student"){
-//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID.value
-//         axios.put(query, {
-//             Cname: className.value
-//         }).then((res) => {
-//             if (res.data.status === 'success') {
-//                 alert("Update successfully")
-//             } else {
-//                 alert(res.data.status)
-//             }
-//         })
-//     }
-// }
-// const deleteClass = async () => {
-//     if (state.value.userStatus != "student"){
-//         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID.value
-//         axios.delete(query).then((res) => {
-//             if (res.data.status === 'success') {
-//                 alert("Delete successfully")
-//             } else {
-//                 alert(res.data.status)
-//             }
-//         })
-//     }
-// }
+
+// List all the classes
+const listClass = async () => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/class/getAll/teacher/" + state.value.UID
+        axios.get(query).then((res) => {
+            if (res.data.status === 'success') {
+                classCount.value = res.data.classes.length
+                for (let i = 0; i < res.data.classes.length; i++) {
+                    classID.push(res.data.classes[i].CID)
+                    className.push(res.data.classes[i].Cname)
+                    showEditClass.push(false)
+                }
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
+listClass()
+const showEditClassBox = (i:number) => {
+    showEditClass[i]= true
+}
+const updateClassName = async (i:number) => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID[i]
+        axios.patch(query, {
+            Cname: className[i]
+        }).then((res) => {
+            if (res.data.status === 'success') {
+                alert("Update successfully")
+                showEditClass[i] = false
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
+
+const deleteClass = async (i:number) => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID[i]
+        axios.delete(query).then((res) => {
+            if (res.data.status === 'success') {
+                alert("Delete successfully")
+                classID.splice(i, 1)
+                className.splice(i, 1)
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
 
 // const updateUserInformation = () => {
 //     if (state.value.userStatus != "student"){
@@ -348,7 +345,7 @@ const showCreateClassBox = () => {
                 <div class="relative overflow-x-auto">
                     <button @click="createQuestion" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create New Question</button>
                     <p class="text-lg font-semibold">Note: The edit action can only change the basic informaiton about the question (question name, question scope and question description).</p>
-                    <p class="text-lg font-semibold">If you need to change the question type, prepared solution and customization, you can only delete the question and recreate it again.</p>
+                    <p class="text-lg font-semibold">If you need to change the question type, prepared solution and customization, currently you can only delete the question and recreate it again.</p>
                     <table class="mt-3 w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -381,6 +378,71 @@ const showCreateClassBox = () => {
                     </td>
                     <td class="px-6 py-4">
                         <a @click=" deleteQuestion(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Delete
+                    </a>
+                    </td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+            <div v-show="viewClass">
+            <div>
+                <ul class="flex border-b">
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold" @click="changeViewRecord">View Students' Exercise Record</a>
+                </li>
+                <li class="-mb-px mr-1">
+                    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibol" @click="changeViewQuestion">Manage Questions</a>
+                </li>
+                <li class="-mb-px mr-1">
+                    <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold">Manage Classes</a>
+                </li>
+                </ul>
+            </div>
+            <div class="container mx-auto sm:px-4 mt-5 mb-5" v-show="state.userStatus != 'student'">
+                <div class="relative overflow-x-auto">
+                    <button @click="createClass" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create New Class</button>
+                    <table class="mt-3 w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Class Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Edit
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Delete
+                    </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="i in classCount" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" v-show="!showEditClass[i-1]">
+                        {{ className[i-1] }}
+                    </th>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" v-show="showEditClass[i-1]">
+                        <input
+                        v-model="className[i-1]"
+                        type="text"
+                        class="px-4 py-2 mt-2 text-sm text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:border-blue-500 focus:bg-white focus:ring-0"
+                        @keydown.enter="updateClassName(i-1)"
+                        />
+                    </th>
+                    <td class="px-6 py-4" v-show="!showEditClass[i-1]">
+                        <a @click=" showEditClassBox(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Edit
+                        </a>
+                    </td>
+                    <td class="px-6 py-4" v-show="showEditClass[i-1]">
+                        <a @click=" updateClassName(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
+                        Edit
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a @click=" deleteClass(i-1)" class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-md dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-gray-700 focus:outline-none focus:bg-blue-600 dark:focus:bg-gray-700">
                         Delete
                     </a>
                     </td>
