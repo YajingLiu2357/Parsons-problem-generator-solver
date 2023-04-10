@@ -277,6 +277,7 @@ const getSequence2 = async () =>{
     })
 }
 const check = async () =>{
+    let showString = ''
     if (questionType === 'context'){
         let deletePlaceHolder = 0
         for (let i = 0; i < sequence.length; i++){
@@ -294,7 +295,8 @@ const check = async () =>{
     for (let i = 0; i < sequence.length; i++) {
         if (pool.answer.length <= i){
             let difference = sequence.length - pool.answer.length
-            alert("Need to add " + difference + " more lines in the right code pool.")
+            showString = showString + 'Need to add ' + difference + ' more lines in the right code pool.\n'
+            // alert("Need to add " + difference + " more lines in the right code pool.")
             break
         }
         let tempSeq = sequence[i]
@@ -315,7 +317,8 @@ const check = async () =>{
             for(let j = 0; j < distractorCode.length; j++){
                 let tempDistractor = distractorCode[j].toString().trim()
                 if (tempDistractor === tempAnswer){
-                    alert("Reason: " + distractorReason[j])
+                    showString = showString + 'Reason: ' + distractorReason[j] + '\n'
+                    // alert("Reason: " + distractorReason[j])
                 }
             }
         }else if (indent[i] !== indentAnswer[i]){
@@ -330,26 +333,32 @@ const check = async () =>{
     if (questionType === 'context' || questionType === 'insert-key-code'){
         score = score - contextNum.value
         if (score < 0){
-            alert("You need to place the context in the original place with original indent.")
+            showString = showString + "You need to place the context in the original place with original indent.\n"
+            // alert("You need to place the context in the original place with original indent.")
             scoreShow.value = (score * 100).toFixed(0) + "%"
-            alert(Math.abs(Math.floor(score)) + " context line(s) is/are not placed in the original place with original indent.")
+            showString = showString + Math.abs(Math.floor(score)) + " context line(s) is/are not placed in the original place with original indent.\n"
+            // alert(Math.abs(Math.floor(score)) + " context line(s) is/are not placed in the original place with original indent.")
         }else if (score === 0){
             scoreShow.value = (score * 100).toFixed(0) + "%"
-            alert("The answer on the left is scored as " + scoreShow.value + ".")
+            showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+            // alert("The answer on the left is scored as " + scoreShow.value + ".")
         }else {
             score = score / (sequence.length - contextNum.value)
             scoreShow.value = (score * 100).toFixed(0) + "%"
-            alert("The answer on the left is scored as " + scoreShow.value + ".")
+            showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+            // alert("The answer on the left is scored as " + scoreShow.value + ".")
         }
     }else{
         scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
-        alert("The answer on the right is scored as " + scoreShow.value + ".")
+        showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+        // alert("The answer on the right is scored as " + scoreShow.value + ".")
     }
     if (questionType === "compare-algorithm"){
         for (let i = 0; i < sequence2.length; i++) {
             if (pool.buffer.length <= i){
                 let difference = sequence2.length - pool.buffer.length
-                alert("Need to add " + difference + " more lines in the middle code pool")
+                showString = showString + 'Need to add ' + difference + ' more lines in the middle code pool.\n'
+                // alert("Need to add " + difference + " more lines in the middle code pool")
                 break
             }
             let tempSeq = sequence2[i]
@@ -364,7 +373,8 @@ const check = async () =>{
                 for(let j = 0; j < distractorCode2.length; j++){
                     let tempDistractor = distractorCode2[j].toString().trim()
                     if (tempDistractor === tempAnswer){
-                        alert("Reason: " + distractorReason2[j])
+                        showString = showString + 'Reason: ' + distractorReason2[j] + '\n'
+                        // alert("Reason: " + distractorReason2[j])
                     }
                 }
             }else if (indent2[i] !== indentAnswer2[i]){
@@ -377,7 +387,8 @@ const check = async () =>{
             }
         }
         scoreShow2.value = (score2 / sequence2.length * 100).toFixed(0) + "%"
-        alert("The answer on the middle is scored as " + scoreShow2.value + ".")
+        showString = showString + "The answer on the middle is scored as " + scoreShow2.value + ".\n"
+        // alert("The answer on the middle is scored as " + scoreShow2.value + ".")
     }
     totalScore.value = ((score + score2) / (sequence.length + sequence2.length) * 100).toFixed(0) + "%"
     console.log(totalScore.value)
@@ -413,6 +424,7 @@ const check = async () =>{
             alert(res.data.status)
         }
     })
+    alert(showString)
 }
 const decreaseIndent = (i: number) =>{
     if (questionType === 'multiple-steps'){
