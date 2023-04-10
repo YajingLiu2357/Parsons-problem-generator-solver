@@ -510,6 +510,7 @@ getQuestionInformation()
 getBlocks()
 </script>
 <template>
+    <div>
 <div class="w-full container mx-auto px-4">
     <div class="flex flex-col items-center">
             <p class="font-bold text-gray-800 hover:text-gray-700 text-2xl">
@@ -597,6 +598,7 @@ getBlocks()
           Check
         </button> 
   </div>
+</div>
 </template>
 
 <style scoped>
