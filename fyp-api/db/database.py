@@ -1741,6 +1741,47 @@ def update_class_part(CID: str, Cname: str):
         playload['status'] = 'error'
         return playload
 
+def update_user_name(UID: str, Uname: str):
+    """ 
+        Update user name
+        Args: 
+        UID (str): user id
+        Uname (str): user name
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `User` SET `Uname` = %s WHERE `UID` = %s"
+                cursor.execute(sql, (Uname, UID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+
+def update_user_email(UID: str, Email: str):
+    """
+        Update user email   
+        Args:
+        UID (str): user id
+        Email (str): user email
+    """
+    playload = {'status': ''}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "UPDATE `User` SET `Email` = %s WHERE `UID` = %s"
+                cursor.execute(sql, (Email, UID))
+                connection.commit()
+                playload['status'] = 'success'
+                return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

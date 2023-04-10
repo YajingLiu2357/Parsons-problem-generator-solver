@@ -123,6 +123,11 @@ class CreateClassData(BaseModel):
     Cname: str
     UID: str
 
+class UpdateUserNameData(BaseModel):
+    Uname: str
+
+class UpdateUserEmailData(BaseModel):
+    Email: str
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -303,3 +308,11 @@ def create_class(createClassData: CreateClassData):
 def delete_class(CID: str):
     from db.database import delete_class
     return delete_class(CID)
+@app.patch('/api/user_name/{UID}')
+def update_user_name(UID: str, updateUserNameData: UpdateUserNameData):
+    from db.database import update_user_name
+    return update_user_name(UID, updateUserNameData.Uname)
+@app.patch('/api/user_email/{UID}')
+def update_user_email(UID: str, updateUserEmailData: UpdateUserEmailData):
+    from db.database import update_user_email
+    return update_user_email(UID, updateUserEmailData.Email)

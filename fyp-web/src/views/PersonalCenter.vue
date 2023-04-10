@@ -27,6 +27,15 @@ const viewRecord = ref(true)
 const viewQuestion = ref(false)
 const viewClass = ref(false)
 const showEditClass = reactive([])
+const userName = ref("")
+const userEmail = ref("")
+const showEditUserName = ref(false)
+const showEditUserEmail = ref(false)
+const getUserInformaiton = () => {
+    userName.value = state.value.userName
+    userEmail.value = state.value.userEmail
+}
+getUserInformaiton()
 const getAllScore = async() =>{
     if (state.value.userStatus == "student"){
         const query = "http://" + config.apiServer + ":" + config.port + "/api/record/getAll/student/" + state.value.UID
@@ -138,7 +147,8 @@ const editQuestion = (i:number) => {
 
 // Delete the question
 const deleteQuestion = async (i:number) => {
-    if (state.value.userStatus != "student"){
+    let result = confirm("Are you sure to delete this question?")
+    if (state.value.userStatus != "student" && result){
         const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + manageQuestionID[i]
         axios.delete(query).then((res) => {
         if (res.data.status === 'success') {
@@ -199,7 +209,8 @@ const updateClassName = async (i:number) => {
 }
 
 const deleteClass = async (i:number) => {
-    if (state.value.userStatus != "student"){
+    let result = confirm("Are you sure to delete this class?")
+    if (state.value.userStatus != "student" && result){
         const query = "http://" + config.apiServer + ":" + config.port + "/api/class/" + classID[i]
         axios.delete(query).then((res) => {
             if (res.data.status === 'success') {
@@ -213,6 +224,52 @@ const deleteClass = async (i:number) => {
     }
 }
 
+const updateUserName = async () => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/user_name/" + state.value.UID
+        axios.patch(query, {
+            Uname: userName.value
+        }).then((res) => {
+            if (res.data.status === 'success') {
+                alert("Update successfully")
+                store.commit('chgUser', {
+                    UID: state.value.UID,
+                    userEmail: state.value.userEmail,
+                    userName: userName.value,
+                })
+                showEditUserName.value = false
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
+const showEditUserNameBox = () => {
+    showEditUserName.value = true
+}
+const showEditUserEmailBox = () => {
+    showEditUserEmail.value = true
+}
+const updateUserEmail = async () => {
+    if (state.value.userStatus != "student"){
+        const query = "http://" + config.apiServer + ":" + config.port + "/api/user_email/" + state.value.UID
+        axios.patch(query, {
+            Email: userEmail.value
+        }).then((res) => {
+            if (res.data.status === 'success') {
+                alert("Update successfully")
+                store.commit('chgUser', {
+                    UID: state.value.UID,
+                    userEmail: userEmail.value,
+                    userName: state.value.userName,
+                })
+                showEditUserEmail.value = false
+            } else {
+                alert(res.data.status)
+            }
+        })
+    }
+}
 // const updateUserInformation = () => {
 //     if (state.value.userStatus != "student"){
 //         router.push('/update_user_information')
@@ -237,8 +294,29 @@ const deleteClass = async (i:number) => {
 			<img v-show="state.userStatus == 'teacher' || state.userStatus == 'admin'" src="../images/teacher.png" alt="" class="w-56 h-56 ml-10 border rounded-full md:justify-self-start dark:bg-gray-500 dark:border-gray-700">
 			<img v-show="state.userStatus == 'student'" src="../images/students.png" alt="" class="w-56 h-56 border rounded-full md:justify-self-start dark:bg-gray-500 dark:border-gray-700">
             <div class="flex flex-col">
-				<h1 class="text-3xl font-semibold text-center py-3 md:text-left">{{ state.userName }}</h1>
-                <h2 class="text-xl text-center py-3 md:text-left">{{ state.userEmail }}</h2>
+				<h1 class="text-3xl font-semibold text-center py-3 md:text-left"><span v-show="!showEditUserName">{{ userName }} </span> <input
+                        v-show = "showEditUserName"
+                        v-model="userName"
+                        type="text"
+                        class="px-4 py-2 mt-2 text-sm text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:border-blue-500 focus:bg-white focus:ring-0"
+                        @keydown.enter="updateUserName"
+                        />
+                    <button @click="showEditUserNameBox" class="text-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                        <img src="../images/edit-button.png" class="w-10 h-10"/>
+                    </button>
+                </h1>
+                <h2 class="text-xl text-center py-3 md:text-left"><span v-show="!showEditUserEmail">{{ userEmail }}</span>
+                    <input
+                        v-show = "showEditUserEmail"
+                        v-model="userEmail"
+                        type="text"
+                        class="px-4 py-2 mt-2 text-sm text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:border-blue-500 focus:bg-white focus:ring-0"
+                        @keydown.enter="updateUserEmail"
+                        /> 
+                    <button @click="showEditUserEmailBox" class="text-blue-700  hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-small rounded-lg text-sm text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
+                        <img src="../images/edit-button.png" class="w-10 h-10"/>
+                    </button>
+                </h2>
                 <h2 class="text-xl text-center py-3 md:text-left">{{ state.userStatus }}</h2>
 			</div>
 		</div>
