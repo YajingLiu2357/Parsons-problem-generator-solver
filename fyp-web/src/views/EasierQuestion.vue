@@ -534,7 +534,7 @@ const getEasyVersion = async () => {
     const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/get/" + QID
     axios.get(query).then((res) => {
         if (res.data.status === 'success') {
-            router.push('/easier_question/' + res.data.question.QID + '/' + res.data.question.Type)
+            router.push('/question/' + res.data.question.QID + '/' + res.data.question.Type)
         }
     })
 }

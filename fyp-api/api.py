@@ -316,3 +316,7 @@ def update_user_name(UID: str, updateUserNameData: UpdateUserNameData):
 def update_user_email(UID: str, updateUserEmailData: UpdateUserEmailData):
     from db.database import update_user_email
     return update_user_email(UID, updateUserEmailData.Email)
+@app.get('/api/easier_version/get/{QID}')
+def get_easier_version(QID: str):
+    from db.database import get_easier_version
+    return get_easier_version(QID)

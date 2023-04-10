@@ -21,6 +21,14 @@ const getAllQuestion = async () =>{
   axios.get(query).then((res) => {
     if (res.data.status == 'success') {
       questions.value = res.data.questions
+      // for (let i = 0; i < questions.value.length; i++) {
+      //   const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/check/" + questions.value[i].QID
+      //   axios.get(query).then((res) => {
+      //   if (res.data.status === 'success') {
+      //       questions.value.splice(i, 1)
+      //   }
+      // })
+      // }
     } else {
       alert(res.data.status)
     }

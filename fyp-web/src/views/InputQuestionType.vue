@@ -81,7 +81,7 @@ checkEasierVersion()
 
 <template>
     <div>
-    <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+    <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base" v-show="!isEasierVersion">
         <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
         <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
             <span class="mr-2">1</span>
@@ -105,16 +105,52 @@ checkEasierVersion()
         Customize Solution
     </li>
 </ol>
+<ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base" v-show="isEasierVersion">
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">1</span>
+            Input Question Information
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">2</span>
+            Choose Question Type
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">3</span>
+            Upload Solution
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">4</span>
+            Customize Solution
+        </span>
+        </li>
+        <li class="flex md:w-full items-center text-blue-600 dark:text-blue-500 sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <svg aria-hidden="true" class="w-4 h-4 mr-2 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            Choose Question Type (Easier)
+        </span>
+    </li>
+    <li class="flex items-center">
+        <span class="mr-2">6</span>
+        Customize Solution (Easier)
+    </li>
+</ol>
     <div class="min-h-full flex items-center justify-center  px-4 sm:px-6 lg:px-8">
       <div class="w-5/6 space-y-4">
         <h2 class="text-left font-medium text-gray-900">
-          <div class="text-2xl">Choose Proper Question Type:</div>
+          <div class="text-2xl">Choose Proper Question Type: <span v-show="isEasierVersion">(Easier)</span></div>
           <div class="text-md">You can get some ideas from the conceptual gif images, and choose most appropriate one to describe your question.</div>
           <div class="text-md"><span class="font-bold">Note: </span>What is shown in conceptual images may not be identical with actual situation.</div>
         </h2>
         <div class="creation_form">
           <div class="border rounded-lg shadow-lg bg-white px-4">
-            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
+            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700" v-show="!isEasierVersion">
                 <input v-model="type" id="bordered-radio-1" type="radio" value="traditional" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
@@ -174,7 +210,7 @@ checkEasierVersion()
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">Some description</p>
                 </div>  
             </div>
-            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700">
+            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700" v-show="!isEasierVersion">
                 <input v-model="type" id="bordered-radio-7" type="radio" value="compare-algorithm" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <img src="../images/compare-algorithm.gif" class="object-scale-down float-left w-120 h-80 m-5"/>
                 <div>

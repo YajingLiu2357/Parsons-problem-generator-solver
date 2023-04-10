@@ -1782,6 +1782,33 @@ def update_user_email(UID: str, Email: str):
     except:
         playload['status'] = 'error'
         return playload
+def get_easier_version(QID: str):
+    """ 
+        Get easier version
+        Args: 
+        QID (str): question id
+    """
+    playload = {'status': '', 'question': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT `EasierVersionQID` FROM `EasierVersionPointer` WHERE `OriginalQID` = %s"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'no question'
+                    return playload
+                else:
+                    sql = "SELECT * FROM `Question` WHERE `QID` = %s"
+                    cursor.execute(sql, (result['EasierVersionQID']))
+                    result = cursor.fetchone()
+                    playload['status'] = 'success'
+                    playload['question'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
 if __name__ == '__main__':
     res = None
     # res = create_user("YajingLIU", "yajing", "P1908345@mpu.edu.mo", "admin", "")

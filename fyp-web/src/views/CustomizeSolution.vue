@@ -52,7 +52,8 @@ const addDistractorBoxShow2 = ref(false)
 const distractorLine2 = ref(0)
 const distractorCode2 = ref('')
 const distractorReason2 = ref('')
-
+const showSelectType = ref(false)
+const isEasierVersion = ref(false)
 const getQuestion = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
     axios.get(query).then((res) => {
@@ -316,8 +317,8 @@ const createEasierVersion = async () => {
                             UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
-                                alert("Create Easier Version Success")
-                                router.push(('/input_question_type/' + res.data.EasierVersionQID))
+                                alert("Create Easier Version Success!\nThe basic information and the preseted solution of the easier version are inputted at the back end.\nPlease input the question type of the easier version and customize it.")
+                                router.push(('/input_easier_question_type/' + res.data.EasierVersionQID))
                             }
                         })
                     }
@@ -334,8 +335,8 @@ const createEasierVersion = async () => {
                             UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
-                                alert("Create Easier Version Success")
-                                router.push(('/input_question_type/' + res.data.EasierVersionQID))
+                                alert("Create Easier Version Success!\nThe basic information and the preseted solution of the easier version are inputted at the back end.\nPlease input the question type of the easier version and customize it.")
+                                router.push(('/input_easier_question_type/' + res.data.EasierVersionQID))
                             }
                         })
                     }
@@ -358,8 +359,8 @@ const createEasierVersion = async () => {
                             UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
-                                alert("Easier version created")
-                                router.push(('/input_question_type/' + res.data.EasierVersionQID))
+                                alert("Create Easier Version Success!\nThe basic information and the preseted solution of the easier version are inputted at the back end.\nPlease input the question type of the easier version and customize it.")
+                                router.push(('/input_easier_question_type/' + res.data.EasierVersionQID))
                             }
                         })
                     }
@@ -376,8 +377,8 @@ const createEasierVersion = async () => {
                             UID: store.state.UID,
                         }).then((res) => {
                             if (res.data.status === 'success') {
-                                alert("Easier version created")
-                                router.push(('/input_question_type/' + res.data.EasierVersionQID))
+                                alert("Create Easier Version Success!\nThe basic information and the preseted solution of the easier version are inputted at the back end.\nPlease input the question type of the easier version and customize it.")
+                                router.push(('/input_easier_question_type/' + res.data.EasierVersionQID))
                             }
                         })
                     }
@@ -392,8 +393,8 @@ const createEasierVersion = async () => {
             UID: store.state.UID,
         }).then((res) => {
             if (res.data.status === 'success') {
-                alert("Easier version created")
-                router.push(('/input_question_type/' + res.data.EasierVersionQID))
+                alert("Create Easier Version Success!\nThe basic information and the preseted solution of the easier version are inputted at the back end.\nPlease input the question type of the easier version and customize it.")
+                router.push(('/input_easier_question_type/' + res.data.EasierVersionQID))
             }
         })
     }
@@ -484,13 +485,23 @@ const finshDivideCode = async () =>{
         }
     })
 }
+const checkEasierVersion = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/check/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            isEasierVersion.value = res.data.isEasierVersion
+        }
+    })
+}
+
 getQuestion()
 getBID()
 getSID()
+checkEasierVersion()
 </script>
 <template>
     <div>
-    <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+    <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base" v-show="!isEasierVersion">
         <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
         <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
             <span class="mr-2">1</span>
@@ -512,6 +523,42 @@ getSID()
         <li class="flex items-center text-blue-600 dark:text-blue-500">
         <svg aria-hidden="true" class="w-4 h-4 mr-2 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
         Customize Solution
+    </li>
+</ol>
+<ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base" v-show="isEasierVersion">
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">1</span>
+            Input Question Information
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">2</span>
+            Choose Question Type
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">3</span>
+            Upload Solution
+        </span>
+        </li>
+        <li class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">4</span>
+            Customize Solution
+        </span>
+        </li>
+        <li class="flex md:w-full items-center sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+            <span class="mr-2">5</span>
+           Choose Question Type (Easier)
+        </span>
+    </li>
+    <li class="flex items-center text-blue-600 dark:text-blue-500">
+        <svg aria-hidden="true" class="w-4 h-4 mr-2 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        Customize Solution (Easier)
     </li>
 </ol>
     <div>
@@ -772,6 +819,7 @@ getSID()
             class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             type="submit"
             @click="createEasierVersion"
+            v-show="!isEasierVersion"
         >
           Confirm and create easier version
           <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -867,11 +915,13 @@ getSID()
             @click="confirm"
         >
           Confirm and go to question detail page
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button>
         <button
             class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             type="submit"
             @click="createEasierVersion"
+            v-show="!isEasierVersion"
         >
           Confirm and create easier version
           <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -960,11 +1010,13 @@ getSID()
             @click="confirm"
         >
           Confirm and go to question detail page
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button>
         <button
             class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             type="submit"
             @click="createEasierVersion"
+            v-show="!isEasierVersion"
         >
           Confirm and create easier version
           <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -1117,7 +1169,17 @@ getSID()
             type="submit"
             @click="confirm"
         >
-          Confirm
+          Confirm and go to question detail page
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        </button>
+        <button
+            class="float-right mt-7 mr-5 group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            type="submit"
+            @click="createEasierVersion"
+            v-show="!isEasierVersion"
+        >
+          Confirm and create easier version
+          <svg aria-hidden="true" class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button> 
   </div>
   <div class="container mx-auto sm:px-4 mt-5 mb-5" v-if="questionType === 'compare-algorithm'">
