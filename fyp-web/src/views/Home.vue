@@ -10,6 +10,8 @@ import { useStore} from 'vuex'
 import FormData from 'form-data'
 
 const questions = ref([]);
+const filteredQuestions = ref([]);
+const type = ref("");
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
@@ -21,6 +23,7 @@ const getAllQuestion = async () =>{
   axios.get(query).then((res) => {
     if (res.data.status == 'success') {
       questions.value = res.data.questions
+      filteredQuestions.value = questions.value
       // for (let i = 0; i < questions.value.length; i++) {
       //   const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/check/" + questions.value[i].QID
       //   axios.get(query).then((res) => {
@@ -35,6 +38,39 @@ const getAllQuestion = async () =>{
   })
 }
 getAllQuestion()
+const filterAll = () => {
+  filteredQuestions.value = questions.value
+}
+const filterPythonBasis = () => {
+  filteredQuestions.value = questions.value.filter((question) => question.Scope === "python-basis")
+  if (filteredQuestions.value.length === 0) {
+    alert("No questions in this category yet.")
+  }
+}
+const filterDataStructures = () => {
+  filteredQuestions.value = questions.value.filter((question) => question.Scope === "data-structures")
+  if (filteredQuestions.value.length === 0) {
+    alert("No questions in this category yet.")
+  }
+}
+const filterAlgorithms = () => {
+  filteredQuestions.value = questions.value.filter((question) => question.Scope === "algorithms")
+  if (filteredQuestions.value.length === 0) {
+    alert("No questions in this category yet.")
+  }
+}
+const filterRecursion = () => {
+  filteredQuestions.value = questions.value.filter((question) => question.Scope === "recursion")
+  if (filteredQuestions.value.length === 0) {
+    alert("No questions in this category yet.")
+  }
+}
+const filterOther = () => {
+  filteredQuestions.value = questions.value.filter((question) => question.Scope === "other")
+  if (filteredQuestions.value.length === 0) {
+    alert("No questions in this category yet.")
+  }
+}
 </script>
 
 <template>
@@ -44,7 +80,7 @@ getAllQuestion()
   <div class ="px-8 py-8 bg-gray-100">
     <div class="flex justify-between container mx-auto">
       <div class="w-full lg:w-8/12">
-        <div class = "mt-6" v-for="question in questions" :key="question.QID">
+        <div class = "mt-6" v-for="question in filteredQuestions" :key="question.QID">
            <div class="w-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{question.Qname}}</h5>
           <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{question.Description}}</p>
@@ -60,10 +96,22 @@ getAllQuestion()
           <div class="flex flex-col bg-white px-4 py-6 max-w-sm mx-auto rounded-lg shadow-md">
             <ul class="">
               <li>
-                - Data Structures
+                <button @click="filterAll()">- All</button>
               </li>
               <li class="mt-2">
-                - Algorithms
+                <button @click="filterPythonBasis()" >- Python Basis</button>
+              </li>
+              <li class="mt-2">
+                <button @click="filterDataStructures()" value="DataStructures">- Data Structures</button>
+              </li>
+              <li class="mt-2">
+              <button @click="filterAlgorithms()" value="Algorithms">- Algorithms</button>
+              </li>
+              <li class="mt-2">
+                <button @click="filterRecursion()" value="Recursion">- Recursion</button>
+              </li>
+              <li class="mt-2">
+                <button @click="filterOther()" value="Other">- Other</button>
               </li>
             </ul>
           </div>
