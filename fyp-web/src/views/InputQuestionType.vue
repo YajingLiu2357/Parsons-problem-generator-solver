@@ -167,19 +167,25 @@ checkEasierVersion()
                 <img src="../images/context.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
                     <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Context</h5>
-                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question provides some context codes as tips.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- This type of question provides some context codes as tips. And placeholders</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">   are also provided as tips</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer sheet.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The code is divided into line level.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Some codes can be given in order as tips.</p>
                     <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
                 </div>  
             </div>
-            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700" v-show="false">
+            <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700" v-show="isEasierVersion">
                 <input v-model="type" id="bordered-radio-3" type="radio" value="insert-key-code" name="bordered-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <img src="../images/traditional.gif" class="float-left w-120 h-80 m-5"/>
+                <img src="../images/insert-key-code.gif" class="float-left w-120 h-80 m-5"/>
                 <div>
-                    <h5 class="block mt-5 mb-3 text-lg font-medium text-gray-900 dark:text-gray-300">Insert Key Code</h5>
-                    <p class="block text-lg font-medium text-gray-900 dark:text-gray-300">Some description</p>
+                    <h5 class="block mt-5 mb-3 text-lg font-bold text-gray-900 dark:text-gray-300">Insert Key Code:</h5>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Similar to the context type, but the </p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">  placeholder is not provided as tips</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- One code pool and one answer sheet.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- The code is divided into line level.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Some codes can be given in order as tips.</p>
+                    <p class="block text-lg font-normal text-gray-900 dark:text-gray-300">- Distractor allowed.</p>
                 </div>  
             </div>
             <div class="mt-4 mb-4 border-double border-4 border-cyan-600 flex items-center pl-4 rounded dark:border-gray-700" v-show="false">

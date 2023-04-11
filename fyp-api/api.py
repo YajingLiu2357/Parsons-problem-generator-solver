@@ -320,3 +320,7 @@ def update_user_email(UID: str, updateUserEmailData: UpdateUserEmailData):
 def get_easier_version(QID: str):
     from db.database import get_easier_version
     return get_easier_version(QID)
+@app.get('/api/original_version/get/{QID}')
+def get_original_version(QID: str):
+    from db.database import get_original_version
+    return get_original_version(QID)

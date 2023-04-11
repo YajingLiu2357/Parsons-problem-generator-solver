@@ -53,6 +53,7 @@ const scoreShow2 = ref('')
 const totalScore = ref('')
 const contextNum = ref(0)
 const isEasierVersion = ref(false)
+const haveEasierVersion = ref(false)
 
 const getQuestionInformation = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
@@ -538,8 +539,27 @@ const getEasyVersion = async () => {
         }
     })
 }
-const goBack = () => {
-    router.go(-1)
+const checkHaveEasierVersion = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/easier_version/get/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'no easier version') {
+            haveEasierVersion.value = false
+        } else if (res.data.status === 'success') {
+            haveEasierVersion.value = true
+        }else {
+            haveEasierVersion.value = false
+        }
+    })
+}
+checkHaveEasierVersion()
+
+const goBack = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/original_version/get/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            router.push('/question/' + res.data.question.QID + '/' + res.data.question.Type)
+        }
+    })
 }
 </script>
 <template>
@@ -634,7 +654,7 @@ const goBack = () => {
             class="mr-5 mt-4 mb-10 float-right group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             type="submit"
             @click="getEasyVersion"
-            v-show="!isEasierVersion"
+            v-show="!isEasierVersion && haveEasierVersion"
         >
           Not have ideas? Click here to get easier version
         </button>

@@ -538,8 +538,13 @@ const getEasyVersion = async () => {
         }
     })
 }
-const goBack = () => {
-    router.go(-1)
+const goBack = async () => {
+    const query = "http://" + config.apiServer + ":" + config.port + "/api/original_version/get/" + QID
+    axios.get(query).then((res) => {
+        if (res.data.status === 'success') {
+            router.push('/question/' + res.data.question.QID + '/' + res.data.question.Type)
+        }
+    })
 }
 </script>
 <template>

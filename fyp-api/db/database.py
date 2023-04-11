@@ -1797,11 +1797,38 @@ def get_easier_version(QID: str):
                 cursor.execute(sql, (QID))
                 result = cursor.fetchone()
                 if (len(result) == 0):
-                    playload['status'] = 'no question'
+                    playload['status'] = 'no easier version'
                     return playload
                 else:
                     sql = "SELECT * FROM `Question` WHERE `QID` = %s"
                     cursor.execute(sql, (result['EasierVersionQID']))
+                    result = cursor.fetchone()
+                    playload['status'] = 'success'
+                    playload['question'] = result
+                    return playload
+    except:
+        playload['status'] = 'error'
+        return playload
+def get_original_version(QID: str):
+    """ 
+        Get original version
+        Args: 
+        QID (str): question id
+    """
+    playload = {'status': '', 'question': []}
+    try:
+        connection = create_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "SELECT `OriginalQID` FROM `EasierVersionPointer` WHERE `EasierVersionQID` = %s"
+                cursor.execute(sql, (QID))
+                result = cursor.fetchone()
+                if (len(result) == 0):
+                    playload['status'] = 'no original version'
+                    return playload
+                else:
+                    sql = "SELECT * FROM `Question` WHERE `QID` = %s"
+                    cursor.execute(sql, (result['OriginalQID']))
                     result = cursor.fetchone()
                     playload['status'] = 'success'
                     playload['question'] = result

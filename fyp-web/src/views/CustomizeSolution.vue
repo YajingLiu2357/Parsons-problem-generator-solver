@@ -1103,7 +1103,7 @@ checkEasierVersion()
                 Add Step 
                 </button>
                 <div v-if="addBlockBoxShow" class="block w-full">
-                <h6>Group Codes</h6>
+                <h6 class="mt-3">Group Codes for Next Step:</h6>
                 <div class="mt-2 mb-2">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                     >From line:</label
