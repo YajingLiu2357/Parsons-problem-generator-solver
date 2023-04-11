@@ -54,6 +54,8 @@ const distractorCode2 = ref('')
 const distractorReason2 = ref('')
 const showSelectType = ref(false)
 const isEasierVersion = ref(false)
+const startLineList = reactive([])
+const endLineList = reactive([])
 const getQuestion = async () => {
    const query = "http://" + config.apiServer + ":" + config.port + "/api/question/" + QID
     axios.get(query).then((res) => {
@@ -186,6 +188,18 @@ const addBlock = async () => {
     if (startLine.value > endLine.value) {
         alert("Start Line must be smaller than or equal to End Line")
         return
+    }
+    console.log(startLine.value)
+    console.log(endLine.value)
+    for (let i = 0; i < startLineList.length; i++) {
+        if (startLine.value >= startLineList[i] && startLine.value <= endLineList[i]) {
+            alert("No overlapping blocks")
+            return
+        }
+        if (endLine.value >= startLineList[i] && endLine.value <= endLineList[i]) {
+            alert("No overlapping blocks")
+            return
+        }
     }
     for (let i = startLine.value - 1; i < endLine.value; i++) {
         FragmentSeq.value = FragmentSeq.value + FID[i] + ";"
@@ -440,6 +454,16 @@ const groupCode = async () =>{
         FragmentSeq.value = FragmentSeq.value + FID[i] + ";"
         blockCover[i] = true
     }
+    for (let i = 0; i < startLineList.length; i++) {
+        if (startLine.value >= startLineList[i] && startLine.value <= endLineList[i]) {
+            alert("No overlapping blocks")
+            return
+        }
+        if (endLine.value >= startLineList[i] && endLine.value <= endLineList[i]) {
+            alert("No overlapping blocks")
+            return
+        }
+    }
     step.push("Line" + startLine.value + " - Line" + endLine.value)
     const query = "http://" + config.apiServer + ":" + config.port + "/api/block/create"
     axios.post(query, {
@@ -451,6 +475,8 @@ const groupCode = async () =>{
             BlockSeq.value = BlockSeq.value + res.data.uuid + ";"
             alert("Add Block Success")
             addBlockBoxShow.value = false
+            startLineList.push(startLine.value)
+            endLineList.push(endLine.value)
             startLine.value = 0
             endLine.value = 0
             FragmentSeq.value = ''

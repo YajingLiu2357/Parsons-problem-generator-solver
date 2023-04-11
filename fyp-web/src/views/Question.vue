@@ -342,17 +342,17 @@ const check = async () =>{
             // alert(Math.abs(Math.floor(score)) + " context line(s) is/are not placed in the original place with original indent.")
         }else if (score === 0){
             scoreShow.value = (score * 100).toFixed(0) + "%"
-            showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+            showString = showString + "The answer on the right is scored as " + scoreShow.value + ".\n"
             // alert("The answer on the left is scored as " + scoreShow.value + ".")
         }else {
             score = score / (sequence.length - contextNum.value)
             scoreShow.value = (score * 100).toFixed(0) + "%"
-            showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+            showString = showString + "The answer on the right is scored as " + scoreShow.value + ".\n"
             // alert("The answer on the left is scored as " + scoreShow.value + ".")
         }
     }else{
         scoreShow.value = (score / sequence.length * 100).toFixed(0) + "%"
-        showString = showString + "The answer on the left is scored as " + scoreShow.value + ".\n"
+        showString = showString + "The answer on the right is scored as " + scoreShow.value + ".\n"
         // alert("The answer on the right is scored as " + scoreShow.value + ".")
     }
     if (questionType === "compare-algorithm"){
