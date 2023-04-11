@@ -1061,6 +1061,7 @@ checkEasierVersion()
                     class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     type="submit"
                     @click="addDistractorBoxShow = true"
+                    v-show="false"
                 >
                 Add Distractor
                 </button>
@@ -1221,6 +1222,7 @@ checkEasierVersion()
                     class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     type="submit"
                     @click="addDistractorBoxShow = true"
+                    v-show="false"
                 >
                 Add Distractor
                 </button>
@@ -1289,6 +1291,7 @@ checkEasierVersion()
                     class="mr-9 mb-3 mt-3 float-left group relative flex justify-center py-3 px-6 border border-transparent font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     type="submit"
                     @click="addDistractorBoxShow = true"
+                    v-show="false"
                 >
                 Add Distractor
                 </button>
