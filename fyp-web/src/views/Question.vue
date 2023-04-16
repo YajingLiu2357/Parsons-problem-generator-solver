@@ -319,6 +319,8 @@ const check = async () =>{
             for(let j = 0; j < distractorCode.length; j++){
                 let tempDistractor = distractorCode[j].toString().trim()
                 if (tempDistractor === tempAnswer){
+                    showString = showString + 'You choose the distractor code.\n'
+                    showString = showString + 'Why this code is wrong? \n'
                     showString = showString + 'Reason: ' + distractorReason[j] + '\n'
                     // alert("Reason: " + distractorReason[j])
                 }

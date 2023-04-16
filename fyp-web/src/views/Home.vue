@@ -15,6 +15,14 @@ const type = ref("");
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
+const filterAllFlag = ref(true);
+const filterPythonBasisFlag = ref(false);
+const filterDataStructuresFlag = ref(false);
+const filterAlgorithmsFlag = ref(false);
+const filterRecursionFlag = ref(false);
+const filterOtherFlag = ref(false);
+const white = ref("#FFFFFF");
+const grey = ref("#D2D2DF");
 
 const state = computed(() => store.state)
 
@@ -39,33 +47,69 @@ const getAllQuestion = async () =>{
 }
 getAllQuestion()
 const filterAll = () => {
+  filterAllFlag.value = true;
+  filterPythonBasisFlag.value = false;
+  filterDataStructuresFlag.value = false;
+  filterAlgorithmsFlag.value = false;
+  filterRecursionFlag.value = false;
+  filterOtherFlag.value = false;
   filteredQuestions.value = questions.value
 }
 const filterPythonBasis = () => {
+  filterAllFlag.value = false;
+  filterPythonBasisFlag.value = true;
+  filterDataStructuresFlag.value = false;
+  filterAlgorithmsFlag.value = false;
+  filterRecursionFlag.value = false;
+  filterOtherFlag.value = false;
   filteredQuestions.value = questions.value.filter((question) => question.Scope === "python-basis")
   if (filteredQuestions.value.length === 0) {
     alert("No questions in this category yet.")
   }
 }
 const filterDataStructures = () => {
+  filterAllFlag.value = false;
+  filterPythonBasisFlag.value = false;
+  filterDataStructuresFlag.value = true;
+  filterAlgorithmsFlag.value = false;
+  filterRecursionFlag.value = false;
+  filterOtherFlag.value = false;
   filteredQuestions.value = questions.value.filter((question) => question.Scope === "data-structures")
   if (filteredQuestions.value.length === 0) {
     alert("No questions in this category yet.")
   }
 }
 const filterAlgorithms = () => {
+  filterAllFlag.value = false;
+  filterPythonBasisFlag.value = false;
+  filterDataStructuresFlag.value = false;
+  filterAlgorithmsFlag.value = true;
+  filterRecursionFlag.value = false;
+  filterOtherFlag.value = false;
   filteredQuestions.value = questions.value.filter((question) => question.Scope === "algorithms")
   if (filteredQuestions.value.length === 0) {
     alert("No questions in this category yet.")
   }
 }
 const filterRecursion = () => {
+  filterAllFlag.value = false;
+  filterPythonBasisFlag.value = false;
+  filterDataStructuresFlag.value = false;
+  filterAlgorithmsFlag.value = false;
+  filterRecursionFlag.value = true;
+  filterOtherFlag.value = false;
   filteredQuestions.value = questions.value.filter((question) => question.Scope === "recursion")
   if (filteredQuestions.value.length === 0) {
     alert("No questions in this category yet.")
   }
 }
 const filterOther = () => {
+  filterAllFlag.value = false;
+  filterPythonBasisFlag.value = false;
+  filterDataStructuresFlag.value = false;
+  filterAlgorithmsFlag.value = false;
+  filterRecursionFlag.value = false;
+  filterOtherFlag.value = true;
   filteredQuestions.value = questions.value.filter((question) => question.Scope === "other")
   if (filteredQuestions.value.length === 0) {
     alert("No questions in this category yet.")
@@ -95,22 +139,22 @@ const filterOther = () => {
           <h1 class="mb-4 text-xl font-bold text-gray-700">Scope</h1>
           <div class="flex flex-col bg-white px-4 py-6 max-w-sm mx-auto rounded-lg shadow-md">
             <ul class="">
-              <li>
+              <li v-bind:style="[filterAllFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
                 <button @click="filterAll()">- All</button>
               </li>
-              <li class="mt-2">
+              <li class="mt-2" v-bind:style="[filterPythonBasisFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
                 <button @click="filterPythonBasis()" >- Python Basis</button>
               </li>
-              <li class="mt-2">
+              <li class="mt-2" v-bind:style ="[filterDataStructuresFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
                 <button @click="filterDataStructures()" value="DataStructures">- Data Structures</button>
               </li>
-              <li class="mt-2">
+              <li class="mt-2" v-bind:style ="[filterAlgorithmsFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
               <button @click="filterAlgorithms()" value="Algorithms">- Algorithms</button>
               </li>
-              <li class="mt-2">
+              <li class="mt-2" v-bind:style ="[filterRecursionFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
                 <button @click="filterRecursion()" value="Recursion">- Recursion</button>
               </li>
-              <li class="mt-2">
+              <li class="mt-2" v-bind:style ="[filterOtherFlag == true? {backgroundColor: grey} : {backgroundColor: white}]">
                 <button @click="filterOther()" value="Other">- Other</button>
               </li>
             </ul>
