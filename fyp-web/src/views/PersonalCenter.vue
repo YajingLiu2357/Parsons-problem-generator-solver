@@ -317,7 +317,8 @@ const updateUserEmail = async () => {
                         <img src="../images/edit-button.png" class="w-10 h-10"/>
                     </button>
                 </h2>
-                <h2 class="text-xl text-center py-3 md:text-left">{{ state.userStatus }}</h2>
+                <!-- <h2 class="text-xl text-center py-3 md:text-left">{{ state.userStatus }}</h2> -->
+                <h2 class="text-xl text-center py-3 md:text-left">teacher</h2>
 			</div>
 		</div>
         <div v-show="state.userStatus == 'teacher' || state.userStatus == 'admin'">
@@ -341,7 +342,7 @@ const updateUserEmail = async () => {
             <div class="container mx-auto sm:px-4 mt-5 mb-5" v-show="state.userStatus != 'student'">
                 <div class="relative overflow-x-auto">
                     <div v-for="Class in CnameShow">
-                        <h3 class="text-xl pb-5">{{ Class }}</h3>
+                        <h3 class="text-xl pb-5 pt-3">{{ Class }}</h3>
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
