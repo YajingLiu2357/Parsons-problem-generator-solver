@@ -317,8 +317,8 @@ const updateUserEmail = async () => {
                         <img src="../images/edit-button.png" class="w-10 h-10"/>
                     </button>
                 </h2>
-                <!-- <h2 class="text-xl text-center py-3 md:text-left">{{ state.userStatus }}</h2> -->
-                <h2 class="text-xl text-center py-3 md:text-left">teacher</h2>
+                <h2 class="text-xl text-center py-3 md:text-left">{{ state.userStatus }}</h2>
+                <!-- <h2 class="text-xl text-center py-3 md:text-left">teacher</h2> -->
 			</div>
 		</div>
         <div v-show="state.userStatus == 'teacher' || state.userStatus == 'admin'">
